@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import axiosInstance from '@/services';
 
 export const useDonation = () => {
+  const lock = useRef(false);
   const [donations, setDonations] = useState([]);
 
   const sendDonation = useCallback(async (amount: number) => {
@@ -13,9 +14,14 @@ export const useDonation = () => {
 
   const getDonations = useCallback(
     async (params?: { lastDonationId?: number; pageSize?: number }) => {
-      setDonations(
-        (await axiosInstance.get('/api/donations', { params })).data?.donations,
-      );
+      if (!lock.current) {
+        lock.current = true;
+        setDonations(
+          (await axiosInstance.get('/api/donations', { params })).data
+            ?.donations,
+        );
+        lock.current = false;
+      }
     },
     [],
   );
