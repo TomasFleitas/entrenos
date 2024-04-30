@@ -27,14 +27,14 @@ export const Menu = () => {
       onClose={() => openMenu(false)}
     >
       <div className={style.list}>
-        <Link href={'/home'}>
+        <Link onClick={() => openMenu(false)} href={'/home'}>
           <HomeOutlined /> Home
         </Link>
-        <Link href={'/donations'}>
+        <Link onClick={() => openMenu(false)} href={'/donations'}>
           <UnorderedListOutlined />
           Donaciones recibidas
         </Link>
-        <Link href={'/profile'}>
+        <Link onClick={() => openMenu(false)} href={'/profile'}>
           <UserOutlined />
           Perfil
         </Link>

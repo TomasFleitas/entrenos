@@ -17,6 +17,7 @@ donationSchema.index({ donorId: 'text' });
 donationSchema.index({ recipientId: 'text' });
 donationSchema.index({ timestamp: 'desc' });
 
+// TODO FIX COLLECITON NAME
 const DonationsModel = mongoose.model('Donatios', donationSchema);
 
 export default DonationsModel;

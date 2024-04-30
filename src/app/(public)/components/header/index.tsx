@@ -5,7 +5,7 @@ import Link from 'next/link';
 export const Header = () => {
   return (
     <div className={style['header']}>
-      PublicHeader
+      Logo
       <Link href="/login">Entrar</Link>
     </div>
   );

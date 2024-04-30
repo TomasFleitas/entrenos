@@ -16,7 +16,7 @@ export const Header = () => {
       Logo
       {isLogged && (
         <>
-          <h4>Puntaje: {user?.score}</h4>
+          <h4>Puntaje: {user?.score?.toFixed(2) || 0.0}</h4>
           <Button
             type="text"
             onClick={() => openMenu(true)}

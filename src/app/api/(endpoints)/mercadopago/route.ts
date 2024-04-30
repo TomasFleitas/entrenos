@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { DonationsModel, UsersModel } from '@/mongo';
+import { descomprimirString } from '../../lib/const';
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');
@@ -87,7 +88,9 @@ export async function POST(req: NextRequest) {
       );
       const payment = await response.json();
 
-      const externalReference = JSON.parse(payment.external_reference);
+      const externalReference = JSON.parse(
+        await descomprimirString(payment.external_reference as string),
+      );
 
       const fee =
         payment.charges_details.find(

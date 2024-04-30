@@ -1,8 +1,8 @@
 import { UsersModel, MongoConnection, DonationsModel } from '@/mongo';
-
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
+import { comprimirString } from '../../lib/const';
 
 const mongo = new MongoConnection();
 
@@ -155,6 +155,7 @@ export async function POST(req: NextRequest) {
         title: process.env.DONATION_TITLE || 'Titulo',
         quantity: 1,
         unit_price,
+        category_id: 'donations',
       },
       { donorId: uid, recipientId: user.uid },
     );
@@ -168,7 +169,13 @@ export async function POST(req: NextRequest) {
 
 async function createMercadoPagoCheckoutLink(
   accessToken: string,
-  item: { id: string; title: string; quantity: number; unit_price: number },
+  item: {
+    id: string;
+    title: string;
+    quantity: number;
+    unit_price: number;
+    category_id: string;
+  },
   extraInformation: { donorId: string; recipientId: string },
 ) {
   const notification_url = `${process.env.APP_BASE_URL!}${process.env
@@ -197,13 +204,13 @@ async function createMercadoPagoCheckoutLink(
         id: '2',
         title: 'Tarifa del servicio',
         quantity: 1,
+        category_id: 'services',
         unit_price: marketplace_fee,
       },
     ],
     auto_return: 'approved',
     binary_mode: true,
-    expires: true,
-    external_reference: JSON.stringify(extraInformation),
+    external_reference: await comprimirString(JSON.stringify(extraInformation)),
     marketplace: process.env.MERCADO_PAGO_CLIENT_ID,
     marketplace_fee,
     notification_url,
