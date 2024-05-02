@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import { useUserPreference } from '@/app/provider/userPreference';
 import { MenuOutlined } from '@ant-design/icons';
 import { useAuth } from '@/app/provider/authContext';
+import Link from 'next/link';
 
 export const Header = () => {
   const { isLogged, user } = useAuth();
@@ -13,7 +14,7 @@ export const Header = () => {
 
   return (
     <div className={style['header']}>
-      Logo
+      <Link href="/">Logo</Link>
       {isLogged && (
         <>
           <h4>Puntaje: {user?.score?.toFixed(2) || 0.0}</h4>
