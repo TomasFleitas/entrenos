@@ -33,11 +33,11 @@ type TAuthContext = {
   user?: User | null;
   isLogged: boolean;
   signInWithGoogle: () => void;
-  getUserFromDB: () => void;
   signOut: () => void;
   updateUser: (user: User) => void;
   isLogin: boolean;
   mpConnected: boolean;
+  isUpdating: boolean;
 };
 
 const AuthContext = createContext<TAuthContext>({} as TAuthContext);
@@ -46,10 +46,18 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+type AuthData =
+  | {
+      init: boolean;
+      user?: User;
+    }
+  | undefined;
+
 export function AuthProvider({ children }: CommonReactProps) {
   const { openErrorNotify } = useNotify();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authData, setAuthData] = useState<AuthData>({ init: false });
+
+  const [isUpdating, setUpdating] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
@@ -57,8 +65,6 @@ export function AuthProvider({ children }: CommonReactProps) {
     let unsubscribeResponse: () => void;
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setLoading(false);
-
       if (user) {
         await setPersistence(auth, browserLocalPersistence);
 
@@ -72,9 +78,8 @@ export function AuthProvider({ children }: CommonReactProps) {
         unsubscribeRequest = RequestInterceptor(user.getIdToken.bind(user));
         unsubscribeResponse = ResponseInterceptor(user.getIdToken.bind(user));
       } else {
-        setUser(user);
+        setAuthData({ init: true });
       }
-
       setIsLogin(false);
     });
 
@@ -89,6 +94,7 @@ export function AuthProvider({ children }: CommonReactProps) {
     seed,
     ...data
   }: Partial<User & { seed: string }>) => {
+    setUpdating(true);
     const avatar = { seed };
 
     const isAvatar = Object.values(avatar).filter(Boolean).length;
@@ -103,8 +109,11 @@ export function AuthProvider({ children }: CommonReactProps) {
           .catch(() => openErrorNotify('Algo salió mal, intente mas tarde.'))
       )?.data || {};
 
-    setUser((prev) => {
-      const newUser = { ...prev, ...updatedUser };
+    setAuthData((prev) => {
+      const newUser: AuthData = {
+        init: true,
+        user: { ...prev?.user, ...updatedUser },
+      };
 
       if (!Object.values(newUser).filter(Boolean).length) {
         return undefined;
@@ -112,13 +121,9 @@ export function AuthProvider({ children }: CommonReactProps) {
 
       return newUser;
     });
-  };
 
-  const getUserFromDB = useCallback(async () => {
-    const { user } = (await axiosInstance.get('/user')).data;
-    setUser((prev) => ({ ...prev, ...user }));
-    return user;
-  }, []);
+    setUpdating(false);
+  };
 
   const signInWithGoogle = useCallback(async () => {
     setIsLogin(true);
@@ -134,19 +139,21 @@ export function AuthProvider({ children }: CommonReactProps) {
 
   const value = useMemo(
     () => ({
-      user,
-      mpConnected: !!user?.mercadoPago,
-      isLogged: !!user,
+      user: authData?.user,
+      mpConnected: !!authData?.user?.mpConnected,
+      isLogged: !!authData?.user,
       signInWithGoogle,
-      getUserFromDB,
       signOut,
       isLogin,
       updateUser,
+      isUpdating,
     }),
-    [user?.uid, user?.updatedAt, isLogin],
+    [authData?.user?.updatedAt, isLogin, isUpdating],
   );
 
-  if (loading && !value.isLogged) {
+  console.log(authData);
+
+  if (!authData?.init) {
     return <Loading />;
   }
 

@@ -33,7 +33,7 @@ export async function PUT(req: NextRequest) {
       { uid },
       {
         uid,
-        defualtName: user.defaultName,
+        defaultName: user.defaultName,
         email: user.email,
         avatar: user.avatar,
         name: user.name,
@@ -150,6 +150,8 @@ const getUserById = async (uid: string) => {
   };
 
   const userAccessToken = user?.mercadoPago?.access_token;
+  user.mpConnected = !!user?.mercadoPago?.access_token;
+  delete user.mercadoPago;
 
   if (!userAccessToken) {
     return user;

@@ -11,7 +11,7 @@ const { Item } = Form;
 
 export default function ProfilePage() {
   const [form] = Form.useForm();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, isUpdating } = useAuth();
 
   return (
     <div className={style.profile}>
@@ -39,6 +39,7 @@ export default function ProfilePage() {
             type="default"
             shape="round"
             htmlType="submit"
+            loading={isUpdating}
             className={style.button}
           >
             ACTUALIZAR

@@ -5,7 +5,7 @@ if (mongoose.models.Users) {
 }
 
 const userSchema = new mongoose.Schema({
-  defualtName: { type: String, trim: true }, // this name comes from google provider
+  defaultName: { type: String, trim: true },
   name: { type: String, trim: true },
   uid: { type: String, required: true, trim: true },
   email: { type: String, trim: true },

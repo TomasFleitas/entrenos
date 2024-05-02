@@ -2,8 +2,10 @@
 
 import { useCallback, useRef, useState } from 'react';
 import axiosInstance from '@/services';
+import { useNotify } from './useNotify';
 
 export const useDonation = () => {
+  const { openErrorNotify } = useNotify();
   const lock = useRef(false);
   const [donations, setDonations] = useState([]);
 
@@ -21,8 +23,11 @@ export const useDonation = () => {
       if (!lock.current) {
         lock.current = true;
         setDonations(
-          (await axiosInstance.get('/api/donations', { params })).data
-            ?.donations,
+          (
+            await axiosInstance
+              .get('/api/donations', { params })
+              .catch(() => openErrorNotify('Error al buscar persona.'))
+          )?.data?.donations,
         );
         lock.current = false;
       }

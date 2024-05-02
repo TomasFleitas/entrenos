@@ -8,7 +8,8 @@ declare module 'firebase/auth' {
       refresh_token: string;
       public_key: string;
     };
-    mercadoPagoAccount?: MercadoPagoAccountDetail ;
+    mpConnected: boolean;
+    mercadoPagoAccount?: MercadoPagoAccountDetail;
     avatar?: {
       seed?: string;
     };
