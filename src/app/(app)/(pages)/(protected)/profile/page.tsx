@@ -5,7 +5,6 @@ import { useAuth } from '@/app/provider/authContext';
 import { Button, DatePicker, Divider, Form, Input } from 'antd';
 import style from './index.module.scss';
 import dayjs from 'dayjs';
-import { UserAvatar } from '@/app/(app)/components/userAvatar';
 import { AvatarEditor } from '@/app/(app)/components/avatarEditor';
 
 const { Item } = Form;
@@ -13,10 +12,7 @@ const { Item } = Form;
 export default function ProfilePage() {
   const [form] = Form.useForm();
   const { user, updateUser } = useAuth();
-  const data = Form.useWatch(['seed', 'name', 'birthday'], form);
 
-  console.log(data);
-  console.log(user);
   return (
     <div className={style.profile}>
       <Form
@@ -45,10 +41,10 @@ export default function ProfilePage() {
             htmlType="submit"
             className={style.button}
           >
-            Actualizar
+            ACTUALIZAR
           </Button>
         </Item>
-        <Divider>Mercado Pago</Divider>
+        <Divider>MERCADO PAGO</Divider>
         <ConnectMercadoPago />
       </Form>
     </div>

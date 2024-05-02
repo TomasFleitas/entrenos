@@ -27,6 +27,7 @@ import {
   setToken,
 } from '@/services/interceptors';
 import { Loading } from '../components/loading';
+import { useNotify } from '../hook/useNotify';
 
 type TAuthContext = {
   user?: User | null;
@@ -46,6 +47,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: CommonReactProps) {
+  const { openErrorNotify } = useNotify();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
@@ -91,14 +93,25 @@ export function AuthProvider({ children }: CommonReactProps) {
 
     const isAvatar = Object.values(avatar).filter(Boolean).length;
 
-    const { user: updatedUser } = (
-      await axiosInstance.put('/api/user', {
-        ...data,
-        ...(isAvatar && { avatar }),
-      })
-    ).data;
+    const { user: updatedUser } =
+      (
+        await axiosInstance
+          .put('/api/user', {
+            ...data,
+            ...(isAvatar && { avatar }),
+          })
+          .catch(() => openErrorNotify('Algo salió mal, intente mas tarde.'))
+      )?.data || {};
 
-    setUser((prev) => ({ ...prev, ...updatedUser }));
+    setUser((prev) => {
+      const newUser = { ...prev, ...updatedUser };
+
+      if (!Object.values(newUser).filter(Boolean).length) {
+        return undefined;
+      }
+
+      return newUser;
+    });
   };
 
   const getUserFromDB = useCallback(async () => {
@@ -133,7 +146,7 @@ export function AuthProvider({ children }: CommonReactProps) {
     [user?.uid, user?.updatedAt, isLogin],
   );
 
-  if (loading && value.isLogged) {
+  if (loading && !value.isLogged) {
     return <Loading />;
   }
 

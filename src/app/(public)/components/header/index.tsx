@@ -6,7 +6,7 @@ export const Header = () => {
   return (
     <div className={style['header']}>
       Logo
-      <Link href="/login">Entrar</Link>
+      <Link href="/login">ENTRAR</Link>
     </div>
   );
 };

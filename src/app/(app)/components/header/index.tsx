@@ -17,7 +17,7 @@ export const Header = () => {
       <Link href="/">Logo</Link>
       {isLogged && (
         <>
-          <h4>Puntaje: {user?.score?.toFixed(2) || 0.0}</h4>
+          <h4>{user?.score?.toFixed(2) || 0.0}</h4>
           <Button
             type="text"
             onClick={() => openMenu(true)}

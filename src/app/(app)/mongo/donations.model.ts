@@ -1,8 +1,7 @@
-import { ObjectId } from 'mongodb';
 import mongoose from './connection';
 
-if (mongoose.models.Donatios) {
-  delete mongoose.models.Donatios;
+if (mongoose.models.Donations) {
+  delete mongoose.models.Donations;
 }
 
 const donationSchema = new mongoose.Schema({

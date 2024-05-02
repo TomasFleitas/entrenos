@@ -25,7 +25,7 @@ export const validateToken = async (req: NextRequest) => {
   } catch (error) {
     throw {
       message: 'Invalid or expired token.',
-      statu: 403,
+      status: 403,
     };
   }
 };

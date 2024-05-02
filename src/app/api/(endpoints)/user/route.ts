@@ -156,33 +156,39 @@ const getUserById = async (uid: string) => {
   }
 
   // Get mercado pago account
-  const url = 'https://api.mercadopago.com/users/me';
+  let mercadoPagoAccount: MercadoPagoAccountDetail;
+  try {
+    const url = 'https://api.mercadopago.com/users/me';
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${userAccessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${userAccessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  const mpUser = (await response.json()) as UserResponse;
+    const mpUser = (await response.json()) as UserResponse;
 
-  const phone =
-    mpUser?.phone && mpUser?.phone?.number
-      ? `${mpUser?.phone?.area_code}${mpUser?.phone?.number}`
-      : undefined;
+    const phone =
+      mpUser?.phone && mpUser?.phone?.number
+        ? `${mpUser?.phone?.area_code}${mpUser?.phone?.number}`
+        : undefined;
 
-  const mercadoPagoAccount: MercadoPagoAccountDetail  = {
-    alias: undefined,
-    cvu: undefined,
-    email: mpUser?.email,
-    firstName: mpUser?.first_name,
-    lastName: mpUser?.last_name,
-    phone,
-    thumbnailUrl: mpUser?.logo ?? (mpUser as any)?.thumbnail?.picture_url!,
-    userName: mpUser?.nickname,
-  };
+    mercadoPagoAccount = {
+      alias: undefined,
+      cvu: undefined,
+      email: mpUser?.email,
+      firstName: mpUser?.first_name,
+      lastName: mpUser?.last_name,
+      phone,
+      thumbnailUrl: mpUser?.logo ?? (mpUser as any)?.thumbnail?.picture_url!,
+      userName: mpUser?.nickname,
+    };
+  } catch (error) {
+    console.error(error);
+    return user;
+  }
 
   return { ...user, mercadoPagoAccount };
 };

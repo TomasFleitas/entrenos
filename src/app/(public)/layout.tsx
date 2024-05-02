@@ -1,3 +1,4 @@
+import { Footer } from '../components/footer';
 import { Header } from './components/header';
 import style from './index.module.scss';
 
@@ -6,6 +7,7 @@ export default function PublicLayout({ children }: CommonReactProps) {
     <>
       <Header />
       <section className={style.section}>{children}</section>
+      <Footer />
     </>
   );
 }
