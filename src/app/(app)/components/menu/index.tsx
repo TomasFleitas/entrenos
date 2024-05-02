@@ -8,7 +8,6 @@ import {
   HomeOutlined,
   UserOutlined,
   UnorderedListOutlined,
-  ToolOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 
@@ -32,7 +31,7 @@ export const Menu = () => {
         </Link>
         <Link onClick={() => openMenu(false)} href={'/donations'}>
           <UnorderedListOutlined />
-          Donaciones recibidas
+          Donaciones
         </Link>
         <Link onClick={() => openMenu(false)} href={'/profile'}>
           <UserOutlined />
@@ -40,9 +39,8 @@ export const Menu = () => {
         </Link>
       </div>
       <div>
-        <Button danger type="text" onClick={signOut}>
-          <LogoutOutlined />
-          Cerrar Sesión
+        <Button icon={<LogoutOutlined />} danger type="text" onClick={signOut}>
+          CERRAR SESIÓN
         </Button>
       </div>
     </Drawer>

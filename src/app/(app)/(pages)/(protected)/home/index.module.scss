@@ -7,6 +7,11 @@
   flex-direction: column;
   gap: 10px;
 
+  h1 {
+    text-align: center;
+    color: rgb(83, 83, 83);
+  }
+
   .amounts {
     display: flex;
     gap: 10px;

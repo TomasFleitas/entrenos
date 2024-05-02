@@ -151,8 +151,6 @@ export function AuthProvider({ children }: CommonReactProps) {
     [authData?.user?.updatedAt, isLogin, isUpdating],
   );
 
-  console.log(authData);
-
   if (!authData?.init) {
     return <Loading />;
   }
