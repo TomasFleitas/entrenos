@@ -8,6 +8,10 @@ declare module 'firebase/auth' {
       refresh_token: string;
       public_key: string;
     };
+    mercadoPagoAccount?: MercadoPagoAccountDetail ;
+    avatar?: {
+      seed?: string;
+    };
     uid: string;
     createdAt: string;
     email: string;

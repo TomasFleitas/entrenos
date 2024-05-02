@@ -42,10 +42,10 @@ export const useDonationWatch = () => {
       setDonations(sortDonations(recentDonations));
     });
 
-    socket.on('newDonation', (donations: TDonation[]) => {
-      mapStringToDate(donations);
+    socket.on('newDonation', (donation: TDonation) => {
+      mapStringToDate([donation]);
       setDonations((prevDonations: TDonation[]) =>
-        sortDonations([...donations, ...prevDonations.slice(0, 9)]),
+        sortDonations([donation, ...prevDonations.slice(0, 9)]),
       );
     });
 

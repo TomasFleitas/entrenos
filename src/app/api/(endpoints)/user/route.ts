@@ -1,8 +1,9 @@
-import { DonationsModel, MongoConnection, UsersModel } from '@/mongo';
+import { DonationsModel, MongoConnection, UsersModel } from '@/app/(app)/mongo';
 import { User } from 'firebase/auth';
 import type { NextRequest } from 'next/server';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
+import { UserResponse } from 'mercadopago/dist/clients/user/get/types';
 
 const mongo = new MongoConnection();
 
@@ -34,6 +35,7 @@ export async function PUT(req: NextRequest) {
         uid,
         defualtName: user.defaultName,
         email: user.email,
+        avatar: user.avatar,
         name: user.name,
         birthday: user.birthday,
         updatedAt: new Date(),
@@ -112,6 +114,7 @@ const getUserById = async (uid: string) => {
         updatedAt: { $first: '$updatedAt' },
         mercadoPago: { $first: '$mercadoPago' },
         createdAt: { $first: '$createdAt' },
+        avatar: { $first: '$avatar' },
         donations: {
           $push: {
             amount: '$donations.amount',
@@ -133,6 +136,7 @@ const getUserById = async (uid: string) => {
         defaultName: 1,
         createdAt: 1,
         donations: 1,
+        avatar: 1,
         score: '$totalDecayedDonations',
       },
     },
@@ -145,5 +149,40 @@ const getUserById = async (uid: string) => {
     ),
   };
 
-  return user;
+  const userAccessToken = user?.mercadoPago?.access_token;
+
+  if (!userAccessToken) {
+    return user;
+  }
+
+  // Get mercado pago account
+  const url = 'https://api.mercadopago.com/users/me';
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${userAccessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const mpUser = (await response.json()) as UserResponse;
+
+  const phone =
+    mpUser?.phone && mpUser?.phone?.number
+      ? `${mpUser?.phone?.area_code}${mpUser?.phone?.number}`
+      : undefined;
+
+  const mercadoPagoAccount: MercadoPagoAccountDetail  = {
+    alias: undefined,
+    cvu: undefined,
+    email: mpUser?.email,
+    firstName: mpUser?.first_name,
+    lastName: mpUser?.last_name,
+    phone,
+    thumbnailUrl: mpUser?.logo ?? (mpUser as any)?.thumbnail?.picture_url!,
+    userName: mpUser?.nickname,
+  };
+
+  return { ...user, mercadoPagoAccount };
 };

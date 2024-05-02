@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
-import { DonationsModel, UsersModel } from '@/mongo';
+
 import { descomprimirString } from '../../lib/const';
+import { DonationsModel, UsersModel } from '@/app/(app)/mongo';
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');

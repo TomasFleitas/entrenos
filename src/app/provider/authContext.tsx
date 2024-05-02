@@ -20,13 +20,13 @@ import {
 } from 'firebase/auth';
 
 import { auth } from '@/utils/firebase';
-import { Loading } from '../components/loading';
 import axiosInstance from '@/services';
 import {
   RequestInterceptor,
   ResponseInterceptor,
   setToken,
 } from '@/services/interceptors';
+import { Loading } from '../components/loading';
 
 type TAuthContext = {
   user?: User | null;
@@ -83,9 +83,20 @@ export function AuthProvider({ children }: CommonReactProps) {
     };
   }, []);
 
-  const updateUser = async (data: Partial<User>) => {
-    const { user: updatedUser } = (await axiosInstance.put('/api/user', data))
-      .data;
+  const updateUser = async ({
+    seed,
+    ...data
+  }: Partial<User & { seed: string }>) => {
+    const avatar = { seed };
+
+    const isAvatar = Object.values(avatar).filter(Boolean).length;
+
+    const { user: updatedUser } = (
+      await axiosInstance.put('/api/user', {
+        ...data,
+        ...(isAvatar && { avatar }),
+      })
+    ).data;
 
     setUser((prev) => ({ ...prev, ...updatedUser }));
   };
@@ -122,7 +133,7 @@ export function AuthProvider({ children }: CommonReactProps) {
     [user?.uid, user?.updatedAt, isLogin],
   );
 
-  if (loading) {
+  if (loading && value.isLogged) {
     return <Loading />;
   }
 

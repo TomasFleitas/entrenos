@@ -1,4 +1,4 @@
-import { DonationsModel, MongoConnection } from '@/mongo';
+import { DonationsModel, MongoConnection } from '@/app/(app)/mongo';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
 
@@ -12,10 +12,12 @@ export async function GET(req: NextRequest) {
 
     await mongo.init();
 
-    const pageSize: number = req.nextUrl.searchParams.get('pageSize') as unknown as number || 10;
+    const pageSize: number =
+      (req.nextUrl.searchParams.get('pageSize') as unknown as number) || 10;
     const lastDonationId = req.nextUrl.searchParams.get('lastDonationId');
+    const type = req.nextUrl.searchParams.get('type');
 
-    let query = { donorId: uid } as any;
+    let query = { [type === 'sent' ? 'donorId' : 'recipientId']: uid } as any;
     if (lastDonationId) {
       query = { ...query, _id: { $lt: lastDonationId } };
     }

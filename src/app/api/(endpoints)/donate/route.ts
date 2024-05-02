@@ -1,4 +1,4 @@
-import { UsersModel, MongoConnection, DonationsModel } from '@/mongo';
+import { UsersModel, MongoConnection, DonationsModel } from '@/app/(app)/mongo';
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';

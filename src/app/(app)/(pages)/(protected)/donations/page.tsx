@@ -7,14 +7,12 @@ export default function DonationsPage() {
   const { getDonations, donations } = useDonation();
 
   useEffect(() => {
-    getDonations({ pageSize: 11 });
+    getDonations({ pageSize: 11, type: 'sent' });
   }, []);
-
-  console.log(donations);
 
   return (
     <div>
-      <h4>Donaciones enviadas</h4>
+      <h4>Donaciones</h4>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import DonationList from '../components/donationsList';
 import style from './index.module.scss';
+import DonationList from '@/app/(public)/components/donationsList';
 
 export default function LandingPage() {
   return (
@@ -14,7 +14,7 @@ export default function LandingPage() {
           podría ser para ti. Mientras más dones, más oportunidades tendrás de
           recibir. ¡Únete ahora y forma parte de esta cadena de generosidad!
         </p>
-        <Link href={'/login'}>
+        <Link className={style.link} href={'/login'}>
           Hazte miembro y comienza a colaborar y recibir ayuda
         </Link>
       </div>

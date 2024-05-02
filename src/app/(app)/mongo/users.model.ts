@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, trim: true },
   lastDonationAt: Date,
   birthday: Date,
+  avatar: {
+    seed: String,
+  },
   mercadoPago: {
     access_token: String,
     expires_in: Number,

@@ -13,7 +13,11 @@ export const useDonation = () => {
   }, []);
 
   const getDonations = useCallback(
-    async (params?: { lastDonationId?: number; pageSize?: number }) => {
+    async (params?: {
+      lastDonationId?: number;
+      pageSize?: number;
+      type: 'sent' | 'received';
+    }) => {
       if (!lock.current) {
         lock.current = true;
         setDonations(
