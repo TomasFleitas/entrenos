@@ -12,9 +12,9 @@ const app = !getApps().length
         messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
       },
-      process.env.APP_NAME,
+      process.env.NEXT_PUBLIC_APP_NAME,
     )
-  : getApp(process.env.APP_NAME);
+  : getApp(process.env.NEXT_PUBLIC_APP_NAME);
 
 const auth = getAuth(app);
 

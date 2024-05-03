@@ -17,6 +17,7 @@ import {
   GoogleAuthProvider,
   setPersistence,
   browserLocalPersistence,
+  signInWithPopup,
 } from 'firebase/auth';
 
 import { auth } from '@/utils/firebase';
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: CommonReactProps) {
     let unsubscribeResponse: () => void;
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log('USER', user);
       if (user) {
         await setPersistence(auth, browserLocalPersistence);
         setToken(await user.getIdToken());
@@ -125,7 +127,7 @@ export function AuthProvider({ children }: CommonReactProps) {
   const signInWithGoogle = useCallback(async () => {
     setIsLogin(true);
     try {
-      await signInWithRedirect(auth, new GoogleAuthProvider());
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
       console.log(error);
       setIsLogin(false);

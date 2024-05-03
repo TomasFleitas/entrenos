@@ -15,5 +15,20 @@
   .amounts {
     display: flex;
     gap: 10px;
+    .donation {
+      display: flex;
+      font-size: 20px;
+      align-items: center;
+      font-weight: bold;
+      &:hover {
+        fill: #4096ff;
+      }
+    }
+  }
+
+  .info-text {
+    font-size: 10px;
+    color: rgb(83, 83, 83);
+    font-style: italic;
   }
 }

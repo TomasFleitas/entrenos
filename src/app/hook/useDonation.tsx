@@ -8,10 +8,22 @@ export const useDonation = () => {
   const { openErrorNotify } = useNotify();
   const lock = useRef(false);
   const [donations, setDonations] = useState([]);
+  const [sending, setSending] = useState(false);
 
   const sendDonation = useCallback(async (amount: number) => {
-    const { url } = (await axiosInstance.post('/api/donate', { amount })).data;
-    window.location.href = url;
+    setSending(true);
+    const { url } =
+      (
+        await axiosInstance
+          .post('/api/donate', { amount })
+          .catch(() => openErrorNotify('Algo salió mal, intente mas tarde.'))
+      )?.data || {};
+
+    setSending(false);
+
+    if (url) {
+      window.location.href = url;
+    }
   }, []);
 
   const getDonations = useCallback(
@@ -35,5 +47,5 @@ export const useDonation = () => {
     [],
   );
 
-  return { sendDonation, getDonations, donations };
+  return { sendDonation, getDonations, donations, sending };
 };

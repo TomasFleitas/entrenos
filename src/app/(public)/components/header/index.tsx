@@ -1,11 +1,12 @@
 import React from 'react';
 import style from './index.module.scss';
 import Link from 'next/link';
+import { Logo } from '@/app/components/logo';
 
 export const Header = () => {
   return (
     <div className={style['header']}>
-      Logo
+      <Logo />
       <Link href="/login">ENTRAR</Link>
     </div>
   );
