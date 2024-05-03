@@ -67,14 +67,11 @@ export function AuthProvider({ children }: CommonReactProps) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await setPersistence(auth, browserLocalPersistence);
-
         setToken(await user.getIdToken());
-
         await updateUser({
           email: user.email,
           defaultName: user.displayName,
         });
-
         unsubscribeRequest = RequestInterceptor(user.getIdToken.bind(user));
         unsubscribeResponse = ResponseInterceptor(user.getIdToken.bind(user));
       } else {
@@ -116,7 +113,7 @@ export function AuthProvider({ children }: CommonReactProps) {
       };
 
       if (!Object.values(newUser).filter(Boolean).length) {
-        return undefined;
+        return { init: false };
       }
 
       return newUser;
