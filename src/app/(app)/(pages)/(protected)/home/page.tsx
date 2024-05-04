@@ -6,6 +6,7 @@ import { AMOUNTS_OPTIONS } from '@/utils/const';
 import { useAuth } from '@/app/provider/authContext';
 import { useDonation } from '@/app/hook/useDonation';
 import { MoneyIcon } from '@/app/(app)/components/icons';
+import { MercadoPagoWarning } from '@/app/(app)/components/mercadoPagoWarning';
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ export default function HomePage() {
           Estamos buscando al mejor candidato...
         </p>
       )}
+      <MercadoPagoWarning />
     </div>
   );
 }

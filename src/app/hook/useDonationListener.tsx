@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import { User } from 'firebase/auth';
 
 export type TDonation = {
   donor: {
     name: string;
+    avatar: User['avatar'];
   };
   recipient: {
     name: string;
+    avatar: User['avatar'];
   };
   timestamp: Date;
   amount: number;

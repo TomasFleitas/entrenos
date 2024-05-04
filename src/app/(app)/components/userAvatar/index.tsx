@@ -1,16 +1,15 @@
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
 import { Avatar } from 'antd';
+import style from './index.module.scss';
 
-const avatar = createAvatar(lorelei, {
-  seed: 'pepe 2',
-});
-
-export const UserAvatar = async () => {
-  const svg = avatar.toDataUriSync();
-  return (
-    <div>
-      <Avatar src={svg} />
-    </div>
-  );
+type Props = {
+  seed?: string;
 };
+
+export const UserAvatar = (param: Props) => (
+  <Avatar
+    className={style.avatar}
+    src={createAvatar(lorelei, param).toDataUriSync()}
+  />
+);

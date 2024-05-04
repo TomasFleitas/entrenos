@@ -1,6 +1,9 @@
 import React from 'react';
 import style from './index.module.scss';
 import { TDonation } from '@/app/hook/useDonationListener';
+import { UserAvatar } from '@/app/(app)/components/userAvatar';
+import { MoneyIcon } from '@/app/(app)/components/icons';
+
 
 type Props = {
   donation: TDonation;
@@ -9,9 +12,16 @@ type Props = {
 export const DonationItem = ({ donation }: Props) => {
   return (
     <div className={style['donation']}>
-      <div>{donation.donor.name}</div>
-      <div>$ {donation.amount}</div>
-      <div>{donation.recipient.name}</div>
+      <div>
+        <UserAvatar {...donation.donor.avatar} />
+        {donation.donor.name}
+      </div>
+      <div>
+        <MoneyIcon /> <p className={style.money}>{donation.amount}</p>
+      </div>
+      <div>
+        {donation.recipient.name} <UserAvatar {...donation.recipient.avatar} />
+      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import style from './index.module.scss';
 import { useMercadoPago } from '@/app/hook/useMercadoPago';
 import { useAuth } from '@/app/provider/authContext';
-import { MercadoPago } from '../icons';
+import { MercadoPagoIcon } from '../icons';
 import { MercadoPagoAccount } from '../mercadoPagoAccount';
 
 export const ConnectMercadoPago = () => {
@@ -23,7 +23,7 @@ export const ConnectMercadoPago = () => {
             danger
             shape="round"
             onClick={disconnectAccount}
-            icon={<MercadoPago height={15} width={'auto'} />}
+            icon={<MercadoPagoIcon height={15} width={'auto'} />}
           >
             DESCONECTAR CUENTA
           </Button>
@@ -35,7 +35,7 @@ export const ConnectMercadoPago = () => {
           loading={loading}
           shape="round"
           onClick={connectAccount}
-          icon={<MercadoPago height={15} width={'auto'} />}
+          icon={<MercadoPagoIcon height={15} width={'auto'} />}
         >
           CONECTAR CUENTA
         </Button>

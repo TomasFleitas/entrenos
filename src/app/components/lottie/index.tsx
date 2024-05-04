@@ -12,8 +12,8 @@ export const LottieComponent = () => {
           preserveAspectRatio: 'xMidYMid slice',
         },
       }}
-      height={200}
-      width={400}
+      height={150}
+      width={300}
     />
   );
 };

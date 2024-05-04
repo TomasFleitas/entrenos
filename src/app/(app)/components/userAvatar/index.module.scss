@@ -1,0 +1,10 @@
+.avatar {
+  height: 70px;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  > span {
+    height: 70px;
+    width: 70px;
+  }
+}

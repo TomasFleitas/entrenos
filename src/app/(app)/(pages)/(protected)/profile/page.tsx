@@ -28,7 +28,7 @@ export default function ProfilePage() {
         <AvatarEditor form={form} />
         <Divider>Datos personales</Divider>
         <Item style={{ width: 300 }} label="Nombre" name="name">
-          <Input maxLength={80} />
+          <Input maxLength={20} showCount />
         </Item>
         <Item label="Cumpleaños" name="birthday">
           <DatePicker format="DD/MM/YYYY  " />

@@ -1,0 +1,12 @@
+.donation-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .filters {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+  }
+}

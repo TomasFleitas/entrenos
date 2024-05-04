@@ -8,6 +8,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import { useAuth } from '@/app/provider/authContext';
 
 import { Logo } from '@/app/components/logo';
+import { HelpIcon } from '../icons';
 
 export const Header = () => {
   const { isLogged, user } = useAuth();
@@ -19,11 +20,16 @@ export const Header = () => {
       {isLogged && (
         <>
           <Tooltip
-            trigger={['click', 'hover']}
+            arrow={false}
+            className={style.points}
+            zIndex={3}
+            trigger={['click']}
             title="Este valor refleja la probabilidad de recibir una donación de otra persona; cuanto mayor sea, más posibilidades hay."
           >
             <h4>{user?.score?.toFixed(2) || 0.0}</h4>
+            <HelpIcon />
           </Tooltip>
+
           <Button
             type="text"
             onClick={() => openMenu(true)}

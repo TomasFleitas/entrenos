@@ -1,10 +1,12 @@
 .footer {
   width: 100%;
   height: 65px;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 10px;
   background-color: rgb(96, 96, 96);
   color: white;
+  z-index: 1;
 }

@@ -5,7 +5,6 @@ import { useDonationWatch } from '@/app/hook/useDonationListener';
 
 const DonationList = () => {
   const { donations } = useDonationWatch();
-
   return (
     <div className={style['donation-list']}>
       {donations.map((donation) => (

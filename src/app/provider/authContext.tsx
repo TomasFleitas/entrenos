@@ -12,7 +12,6 @@ import {
 import {
   User,
   onAuthStateChanged,
-  signInWithRedirect,
   signOut as logout,
   GoogleAuthProvider,
   setPersistence,
@@ -66,7 +65,6 @@ export function AuthProvider({ children }: CommonReactProps) {
     let unsubscribeResponse: () => void;
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('USER', user);
       if (user) {
         await setPersistence(auth, browserLocalPersistence);
         setToken(await user.getIdToken());
