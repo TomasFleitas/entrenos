@@ -20,3 +20,5 @@ export const SingleDonationItem = forwardRef<
     </div>
   );
 });
+
+SingleDonationItem.displayName = 'SingleDonationItem';
