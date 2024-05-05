@@ -19,7 +19,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 
-import { auth } from '@/utils/firebase';
+import { auth, getToken, messaging, onMessage } from '@/utils/firebase';
 import axiosInstance from '@/services';
 import {
   RequestInterceptor,
@@ -27,7 +27,6 @@ import {
   setToken,
 } from '@/services/interceptors';
 import { Loading } from '../components/loading';
-import { useNotify } from '../hook/useNotify';
 
 type TAuthContext = {
   user?: User | null;
@@ -54,7 +53,6 @@ type AuthData =
   | undefined;
 
 export function AuthProvider({ children }: CommonReactProps) {
-  const { openErrorNotify } = useNotify();
   const [authData, setAuthData] = useState<AuthData>({ init: false });
 
   const [isUpdating, setUpdating] = useState(false);
@@ -68,9 +66,13 @@ export function AuthProvider({ children }: CommonReactProps) {
       if (user) {
         await setPersistence(auth, browserLocalPersistence);
         setToken(await user.getIdToken());
+
+        const token = await getNotificationToken();
+
         await updateUser({
           email: user.email,
           defaultName: user.displayName,
+          notificationToken: token,
         });
         unsubscribeRequest = RequestInterceptor(user.getIdToken.bind(user));
         unsubscribeResponse = ResponseInterceptor(user.getIdToken.bind(user));
@@ -80,6 +82,8 @@ export function AuthProvider({ children }: CommonReactProps) {
       setIsLogin(false);
     });
 
+    onPushNotification();
+
     return () => {
       unsubscribe();
       unsubscribeRequest?.();
@@ -87,10 +91,26 @@ export function AuthProvider({ children }: CommonReactProps) {
     };
   }, []);
 
+  const onPushNotification = () => {
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        console.log(payload);
+      });
+    }
+  };
+
+  const getNotificationToken = async () => {
+    if (messaging) {
+      return await getToken(messaging, {
+        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
+      });
+    }
+  };
+
   const updateUser = async ({
     seed,
     ...data
-  }: Partial<User & { seed: string }>) => {
+  }: Partial<User & { seed: string; notificationToken?: string }>) => {
     setUpdating(true);
     const avatar = { seed };
 
@@ -103,7 +123,7 @@ export function AuthProvider({ children }: CommonReactProps) {
             ...data,
             ...(isAvatar && { avatar }),
           })
-          .catch(() => openErrorNotify('Algo salió mal, intente mas tarde.'))
+          .catch(() => null)
       )?.data || {};
 
     setAuthData((prev) => {

@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import serviceAccount from './service-account.json';
 import { NextRequest } from 'next/server';
+import { NotificationPayload } from 'firebase/messaging';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -27,6 +28,24 @@ export const validateToken = async (req: NextRequest) => {
       message: 'Invalid or expired token.',
       status: 403,
     };
+  }
+};
+
+export const sendNotification = async (
+  token: string,
+  notification: NotificationPayload,
+) => {
+  
+  const message = {
+    token: token,
+    notification: notification,
+  };
+
+  try {
+    const response = await admin.messaging().send(message);
+    console.log('Successfully sent message:', response);
+  } catch (error) {
+    console.log('Error sending message:', error);
   }
 };
 

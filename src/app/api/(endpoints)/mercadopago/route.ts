@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Response } from '../../utils';
-import { validateToken } from '../../lib/firebaseAdmin';
+import { sendNotification, validateToken } from '../../lib/firebaseAdmin';
 import { descomprimirString } from '../../lib/const';
 import { DonationsModel, UsersModel } from '@/app/(app)/mongo';
 
@@ -99,10 +99,12 @@ export async function POST(req: NextRequest) {
           ({ accounts }: any) => accounts.to === 'marketplace_owner',
         )?.amounts?.original || 0;
 
+      const amount = payment.transaction_amount - fee;
+
       await DonationsModel.create({
         ...externalReference,
         paymentId,
-        amount: payment.transaction_amount - fee,
+        amount,
       });
 
       await UsersModel.updateOne(
@@ -114,6 +116,18 @@ export async function POST(req: NextRequest) {
           upsert: true,
         },
       );
+
+      const recipient = await UsersModel.findOne({
+        uid: externalReference.recipientId,
+      });
+
+      const notificationToken = recipient?.notificationToken;
+      if (notificationToken) {
+        await sendNotification(notificationToken, {
+          title: 'Nueva colaboración recibida',
+          body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
+        });
+      }
     }
 
     return Response();

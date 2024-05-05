@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import axiosInstance from '@/services';
-import { useNotify } from './useNotify';
+
 import { User } from 'firebase/auth';
 
 type PaginationParams = {
@@ -21,7 +21,6 @@ export type SingleDonation = {
 };
 
 export const useDonation = () => {
-  const { openErrorNotify } = useNotify();
   const lock = useRef(false);
   const keepParams = useRef<PaginationParams>({} as PaginationParams);
   const [donations, setDonations] = useState<SingleDonation[]>([]);
@@ -33,11 +32,8 @@ export const useDonation = () => {
   const sendDonation = useCallback(async (amount: number) => {
     setSending(true);
     const { url } =
-      (
-        await axiosInstance
-          .post('/api/donate', { amount })
-          .catch(() => openErrorNotify('Algo salió mal, intente mas tarde.'))
-      )?.data || {};
+      (await axiosInstance.post('/api/donate', { amount }).catch(() => null))
+        ?.data || {};
 
     setSending(false);
 

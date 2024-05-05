@@ -6,7 +6,6 @@ import { Menu } from '../../components/menu';
 import style from './index.module.scss';
 import { Suspense } from 'react';
 import { SuspenseFallback } from '../../components/suspenseFallback';
-import RequestPermission from '../../components/requestPushNotification';
 
 export default function ProtectedLayout({ children }: CommonReactProps) {
   const { user } = useAuth();
@@ -19,7 +18,6 @@ export default function ProtectedLayout({ children }: CommonReactProps) {
     <Suspense fallback={<SuspenseFallback />}>
       <div className={style.content}>{children}</div>
       <Menu />
-      <RequestPermission />
     </Suspense>
   );
 }
