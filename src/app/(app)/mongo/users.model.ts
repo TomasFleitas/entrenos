@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, trim: true },
   lastDonationAt: Date,
   birthday: Date,
+  notificationToken: { type: String, trim: true },
   avatar: {
     seed: String,
   },

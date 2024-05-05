@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
             { lastDonationAt: { $exists: false } },
             {
               lastDonationAt: {
-                $lt: new Date(new Date().getTime() - daysThreshold * 86400000),
+                $gt: new Date(new Date().getTime() - daysThreshold * 86400000),
               },
             },
           ],

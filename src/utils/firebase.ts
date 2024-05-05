@@ -1,4 +1,11 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
+import {
+  Messaging,
+  getMessaging,
+  getToken,
+  isSupported,
+  onMessage,
+} from 'firebase/messaging';
 import { getAuth } from 'firebase/auth';
 
 // Initialize Firebase
@@ -18,4 +25,14 @@ const app = !getApps().length
 
 const auth = getAuth(app);
 
-export { auth };
+let messaging: Messaging | undefined;
+
+(async () => {
+  if (await isSupported()) {
+    messaging = getMessaging(app);
+  } else {
+    console.warn('Firebase Messaging is not supported in this browser.');
+  }
+})();
+
+export { auth, messaging, getToken, onMessage };
