@@ -3,6 +3,8 @@ import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const mongo = new MongoConnection();
 
 export async function GET(req: NextRequest) {

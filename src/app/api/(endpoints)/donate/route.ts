@@ -4,6 +4,8 @@ import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
 import { comprimirString } from '../../lib/const';
 
+export const dynamic = 'force-dynamic';
+
 const mongo = new MongoConnection();
 
 export async function POST(req: NextRequest) {
