@@ -9,12 +9,7 @@ export default function ServiceWorkerRegistration() {
         .register('/firebase-messaging-sw.js', {
           scope: '/firebase-cloud-messaging-push-scope',
         })
-        .then((registration) => {
-          console.log(
-            'Service Worker registration successful with scope:',
-            registration.scope,
-          );
-        })
+        .then(() => null)
         .catch((err) => {
           console.error('Service Worker registration failed:', err);
         });
