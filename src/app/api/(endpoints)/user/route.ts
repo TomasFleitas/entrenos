@@ -7,6 +7,8 @@ import { UserResponse } from 'mercadopago/dist/clients/user/get/types';
 
 const mongo = new MongoConnection();
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const uid = await validateToken(req);
