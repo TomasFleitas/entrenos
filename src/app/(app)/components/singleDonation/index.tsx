@@ -2,14 +2,14 @@ import { UserAvatar } from '../userAvatar';
 import style from './index.module.scss';
 import { MoneyIcon } from '../icons';
 import { SingleDonation } from '@/app/hook/useDonation';
+import { forwardRef } from 'react';
 
-export const SingleDonationItem = ({
-  donation,
-}: {
-  donation: SingleDonation;
-}) => {
+export const SingleDonationItem = forwardRef<
+  HTMLDivElement,
+  { donation: SingleDonation }
+>(({ donation }, ref) => {
   return (
-    <div className={style.donation}>
+    <div ref={ref} className={style.donation}>
       <div>
         <UserAvatar {...donation.user.avatar} />
         {donation.user.name}
@@ -19,4 +19,4 @@ export const SingleDonationItem = ({
       </div>
     </div>
   );
-};
+});

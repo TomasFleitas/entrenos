@@ -1,6 +1,10 @@
 .donation-list {
   overflow: auto;
 
+  &.hidden {
+    overflow: hidden;
+  }
+
   &::-webkit-scrollbar {
     width: 5px;
   }
@@ -12,5 +16,10 @@
 
   &::-webkit-scrollbar-thumb:hover {
     background: #999999;
+  }
+
+  .loading {
+    font-size: 24;
+    margin: auto;
   }
 }

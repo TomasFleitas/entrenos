@@ -1,7 +1,6 @@
 import { DonationsModel, MongoConnection } from '@/app/(app)/mongo';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
-
 import { NextRequest } from 'next/server';
 
 const mongo = new MongoConnection();
@@ -12,19 +11,16 @@ export async function GET(req: NextRequest) {
 
     await mongo.init();
 
-    const pageSize = req.nextUrl.searchParams.get('pageSize') || '10';
-
-    const lastDonationId = req.nextUrl.searchParams.get('lastDonationId');
-
+    const limit = parseInt(req.nextUrl.searchParams.get('size') || '10');
+    const page = parseInt(req.nextUrl.searchParams.get('page') || '1');
     const type = req.nextUrl.searchParams.get('type');
 
-    console.log(pageSize, lastDonationId, type);
+    const skip = (page - 1) * limit;
 
     const resp = await DonationsModel.aggregate(
       [
-        lastDonationId && { $match: { _id: { $lt: lastDonationId } } },
         { $match: { [type === 'sent' ? 'donorId' : 'recipientId']: uid } },
-        {
+        type === 'received' && {
           $lookup: {
             from: 'users',
             localField: 'donorId',
@@ -32,7 +28,7 @@ export async function GET(req: NextRequest) {
             as: 'donorDetails',
           },
         },
-        {
+        type === 'sent' && {
           $lookup: {
             from: 'users',
             localField: 'recipientId',
@@ -42,28 +38,39 @@ export async function GET(req: NextRequest) {
         },
         {
           $addFields: {
-            donor: { $arrayElemAt: ['$donorDetails', 0] },
-            recipient: { $arrayElemAt: ['$recipientDetails', 0] },
+            ...(type === 'received' && {
+              donor: { $arrayElemAt: ['$donorDetails', 0] },
+            }),
+            ...(type === 'sent' && {
+              recipient: { $arrayElemAt: ['$recipientDetails', 0] },
+            }),
           },
         },
         {
           $sort: { timestamp: -1 },
         },
         {
-          $limit: parseInt(pageSize, 10),
+          $skip: skip,
+        },
+        {
+          $limit: limit,
         },
         {
           $project: {
-            'donor.name': 1,
-            'donor.defaultName': 1,
-            'donor.email': 1,
-            'donor.avatar': 1,
-            'recipient.name': 1,
-            'recipient.defaultName': 1,
-            'recipient.email': 1,
-            'recipient.avatar': 1,
-            donorId: 1,
-            recipientId: 1,
+            ...(type === 'received' && {
+              'donor.name': 1,
+              'donor.defaultName': 1,
+              'donor.email': 1,
+              'donor.avatar': 1,
+              donorId: 1,
+            }),
+            ...(type === 'sent' && {
+              'recipient.name': 1,
+              'recipient.defaultName': 1,
+              'recipient.email': 1,
+              'recipient.avatar': 1,
+              recipientId: 1,
+            }),
             amount: 1,
             paymentId: 1,
             timestamp: 1,

@@ -4,14 +4,17 @@ import { TDonation } from '@/app/hook/useDonationListener';
 import { UserAvatar } from '@/app/(app)/components/userAvatar';
 import { MoneyIcon } from '@/app/(app)/components/icons';
 
-
 type Props = {
   donation: TDonation;
 };
 
 export const DonationItem = ({ donation }: Props) => {
   return (
-    <div className={style['donation']}>
+    <div
+      className={`${style['donation']} ${
+        donation.className ? style[donation.className] : ''
+      }`}
+    >
       <div>
         <UserAvatar {...donation.donor.avatar} />
         {donation.donor.name}

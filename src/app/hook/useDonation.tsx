@@ -3,12 +3,10 @@
 import { useCallback, useRef, useState } from 'react';
 import axiosInstance from '@/services';
 import { useNotify } from './useNotify';
-import { TDonation } from './useDonationListener';
 import { User } from 'firebase/auth';
 
 type PaginationParams = {
-  lastDonationId?: number;
-  pageSize?: number;
+  size?: number;
   type?: 'sent' | 'received';
 };
 
@@ -28,6 +26,9 @@ export const useDonation = () => {
   const keepParams = useRef<PaginationParams>({} as PaginationParams);
   const [donations, setDonations] = useState<SingleDonation[]>([]);
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const currentPage = useRef(1);
+  const noRecords = useRef(false);
 
   const sendDonation = useCallback(async (amount: number) => {
     setSending(true);
@@ -48,13 +49,16 @@ export const useDonation = () => {
   const getDonations = useCallback(
     async (params?: PaginationParams) => {
       if (!lock.current) {
-        let lastDonationId = donations.at(-1)?.id;
+        setLoading(true);
 
         if (
           keepParams.current?.type !== params?.type ||
-          keepParams.current?.pageSize !== params?.pageSize
+          keepParams.current?.size !== params?.size
         ) {
-          lastDonationId = undefined;
+          currentPage.current = 1;
+          setDonations([]);
+        } else if (!noRecords.current) {
+          currentPage.current += 1;
         }
 
         keepParams.current = { ...params };
@@ -63,17 +67,37 @@ export const useDonation = () => {
         const resp = (
           await axiosInstance
             .get('/api/donations', {
-              params: { ...params, lastDonationId },
+              params: { ...params, page: currentPage.current },
             })
-            .catch(() => null)
+            .catch(() => ({
+              data: {
+                donations: [],
+              },
+            }))
         )?.data?.donations;
 
-        setDonations(resp);
+        if ((params?.size || 0) > resp.length + 1) {
+          noRecords.current = true;
+        } else {
+          noRecords.current = false;
+        }
+
+        setDonations((prev) => {
+          if (currentPage.current > 1) {
+            return [...prev, ...resp].filter(
+              (value, index, array) =>
+                array.findIndex((item) => item.id === value.id) === index,
+            );
+          }
+          return resp;
+        });
+
+        setLoading(false);
         lock.current = false;
       }
     },
-    [donations.length],
+    [donations?.length],
   );
 
-  return { sendDonation, getDonations, donations, sending };
+  return { sendDonation, getDonations, donations, sending, loading };
 };

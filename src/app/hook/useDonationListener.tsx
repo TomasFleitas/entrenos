@@ -13,6 +13,7 @@ export type TDonation = {
   };
   timestamp: Date;
   amount: number;
+  className?: string;
 };
 
 const mapStringToDate = (donations: TDonation[]) => {
@@ -48,7 +49,12 @@ export const useDonationWatch = () => {
     socket.on('newDonation', (donation: TDonation) => {
       mapStringToDate([donation]);
       setDonations((prevDonations: TDonation[]) =>
-        sortDonations([donation, ...prevDonations.slice(0, 9)]),
+        sortDonations([
+          { ...donation, className: 'animate' },
+          ...prevDonations
+            .slice(0, 9)
+            .map((value) => ({ ...value, className: undefined })),
+        ]),
       );
     });
 

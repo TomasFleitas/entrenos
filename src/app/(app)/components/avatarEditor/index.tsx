@@ -21,7 +21,7 @@ export const AvatarEditor = ({ form }: Props) => {
       <div className={style.avatar}>
         <Avatar shape="circle" src={uri} />
       </div>
-      <Item style={{ width: 300 }} label="Clave" help="La clave permite generar un valor unico para tu avatar" name="seed">
+      <Item style={{ width: 300 }} label="Clave" help="La clave genera un valor único para tu avatar." name="seed">
         <Input maxLength={80} showCount />
       </Item>
     </>
