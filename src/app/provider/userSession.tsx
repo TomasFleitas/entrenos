@@ -4,15 +4,15 @@ import { createContext, useContext, useEffect, useMemo } from 'react';
 import { messaging, onMessage } from '@/utils/firebase';
 import { notification } from 'antd';
 
-type TUserSession = {};
+type TNotification = {};
 
-const UserSessionContext = createContext<TUserSession>({} as TUserSession);
+const NotificationContext = createContext<TNotification>({} as TNotification);
 
-export function useSession() {
-  return useContext(UserSessionContext);
+export function useNotification() {
+  return useContext(NotificationContext);
 }
 
-export function UserSessionProvider({ children }: CommonReactProps) {
+export function NotificationProvider({ children }: CommonReactProps) {
   const [api, contextHolder] = notification.useNotification();
 
   const openNotification = (message?: string, description?: string) => {
@@ -37,11 +37,11 @@ export function UserSessionProvider({ children }: CommonReactProps) {
   const value = useMemo(() => ({}), []);
 
   return (
-    <UserSessionContext.Provider value={value}>
+    <NotificationContext.Provider value={value}>
       <>
         {contextHolder}
         {children}
       </>
-    </UserSessionContext.Provider>
+    </NotificationContext.Provider>
   );
 }
