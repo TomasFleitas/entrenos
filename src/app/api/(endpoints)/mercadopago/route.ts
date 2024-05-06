@@ -42,9 +42,11 @@ export async function GET(req: NextRequest) {
       return Response({ message: 'Error connecting with Mercado Pago.' }, 401);
     }
 
-    const user = await UsersModel.findOne({ uid });
+    const exist = await UsersModel.exists({
+      mercadoPago: { user_id: data.user_id },
+    });
 
-    if (user?.mercadoPago?.user_id !== data.user_id) {
+    if (!exist) {
       await UsersModel.updateOne(
         { uid },
         {
