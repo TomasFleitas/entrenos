@@ -19,13 +19,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 
-import {
-  auth,
-  getInstanceId,
-  getToken,
-  messaging,
-  onMessage,
-} from '@/utils/firebase';
+import { auth, getInstanceId, getToken, messaging } from '@/utils/firebase';
 import axiosInstance from '@/services';
 import {
   RequestInterceptor,
@@ -95,22 +89,12 @@ export function AuthProvider({ children }: CommonReactProps) {
       setIsLogin(false);
     });
 
-    onPushNotification();
-
     return () => {
       unsubscribe();
       unsubscribeRequest?.();
       unsubscribeResponse?.();
     };
   }, []);
-
-  const onPushNotification = () => {
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        console.log(payload);
-      });
-    }
-  };
 
   const getNotificationToken = async () => {
     if (messaging) {
