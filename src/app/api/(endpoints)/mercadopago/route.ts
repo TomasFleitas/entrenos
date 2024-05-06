@@ -127,8 +127,10 @@ export async function POST(req: NextRequest) {
         ),
       ]);
 
-      const tokens: string[] = Object.values(
-        recipient?.notificationTokens || {},
+      const tokens = Object.values(
+        Object.fromEntries(recipient?.notificationTokens || new Map()) as {
+          [x: string]: string;
+        },
       ).filter(Boolean);
 
       if (tokens.length) {
