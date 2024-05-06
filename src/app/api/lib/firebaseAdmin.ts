@@ -31,22 +31,26 @@ export const validateToken = async (req: NextRequest) => {
   }
 };
 
-
 export const sendNotification = async (
-  token: string,
+  tokens: string[],
   notification: NotificationPayload,
 ) => {
-  
   const message = {
-    token: token,
+    tokens,
     notification: notification,
   };
 
   try {
-    const response = await admin.messaging().send(message);
-    console.log('Successfully sent message:', response);
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log('Successfully sent messages:', response.successCount);
+    if (response.failureCount > 0) {
+      console.log(
+        'Failed messages:',
+        response.responses.filter((res) => !res.success),
+      );
+    }
   } catch (error) {
-    console.log('Error sending message:', error);
+    console.log('Error sending messages:', error);
   }
 };
 

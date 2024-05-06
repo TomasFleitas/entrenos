@@ -129,13 +129,12 @@ export async function POST(req: NextRequest) {
 
       const tokens: string[] = Object.values(
         recipient?.notificationTokens || {},
-      );
+      ).filter(Boolean);
+
       if (tokens.length) {
-        tokens.forEach((token) => {
-          sendNotification(token, {
-            title: 'Nueva colaboración recibida',
-            body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
-          });
+        sendNotification(tokens, {
+          title: 'Nueva colaboración recibida',
+          body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
         });
       }
     }
