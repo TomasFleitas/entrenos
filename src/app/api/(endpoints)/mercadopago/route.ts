@@ -76,6 +76,8 @@ export async function POST(req: NextRequest) {
   try {
     const webHookData = await req.json();
 
+    console.log('WebHook MercadoPago:', webHookData);
+
     if (webHookData.action === 'payment.created') {
       const paymentId = webHookData.data.id;
       const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
