@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest) {
         email: user.email,
         avatar: user.avatar,
         notificationTokens: {
-          ...oldUser?.notificationTokens,
+          ...oldUser?.notificationTokens?.values(),
           ...user.notificationTokens,
         },
         name: user.name,
@@ -59,6 +59,7 @@ export async function PUT(req: NextRequest) {
 
     return Response({ user: updatedUser });
   } catch (error: any) {
+    console.log(error);
     return Response({ message: error.message }, error.status);
   }
 }
@@ -153,14 +154,13 @@ const getUserById = async (uid: string) => {
 
   const user = {
     ...users[0],
-    donations: users[0]?.donations?.filter(
-      (donation: User['donations']) => Object.keys(donation).length,
-    ),
+    isFirstDonation: !users[0]?.donations?.length,
   };
 
   const userAccessToken = user?.mercadoPago?.access_token;
   user.mpConnected = !!user?.mercadoPago?.access_token;
   delete user.mercadoPago;
+  delete user.donations;
 
   if (!userAccessToken) {
     return user;

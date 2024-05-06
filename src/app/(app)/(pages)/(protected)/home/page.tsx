@@ -12,12 +12,11 @@ export default function HomePage() {
   const { user } = useAuth();
   const { sendDonation, sending } = useDonation();
 
-  const isFirst = !user?.donations?.length;
-
   return (
     <div className={style.home}>
       <h1>
-        {(isFirst && 'Realiza tu primera colaboración.') || 'Continúa colaborando.'}
+        {(user?.isFirstDonation && 'Realiza tu primera colaboración.') ||
+          'Continúa colaborando.'}
       </h1>
       <div className={style.amounts}>
         {AMOUNTS_OPTIONS.map((value) => (
