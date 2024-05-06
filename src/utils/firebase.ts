@@ -7,6 +7,7 @@ import {
   onMessage,
 } from 'firebase/messaging';
 import { getAuth } from 'firebase/auth';
+import { getId, getInstallations } from 'firebase/installations';
 
 // Initialize Firebase
 const app = !getApps().length
@@ -25,6 +26,8 @@ const app = !getApps().length
 
 const auth = getAuth(app);
 
+const installations = getInstallations(app);
+
 let messaging: Messaging | undefined;
 
 (async () => {
@@ -35,4 +38,6 @@ let messaging: Messaging | undefined;
   }
 })();
 
-export { auth, messaging, getToken, onMessage };
+const getInstanceId = (): Promise<string> => getId(installations);
+
+export { auth, messaging, getToken, onMessage, getInstanceId };

@@ -31,6 +31,7 @@ export const validateToken = async (req: NextRequest) => {
   }
 };
 
+
 export const sendNotification = async (
   token: string,
   notification: NotificationPayload,

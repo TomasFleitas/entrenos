@@ -29,7 +29,8 @@ export async function PUT(req: NextRequest) {
 
     await mongo.init();
 
-    const user: User & { notificationToken?: string } = await req.json();
+    const user: User & { notificationTokens?: { [x: string]: string | null } } =
+      await req.json();
 
     await UsersModel.updateOne(
       { uid },
@@ -38,7 +39,7 @@ export async function PUT(req: NextRequest) {
         defaultName: user.defaultName,
         email: user.email,
         avatar: user.avatar,
-        notificationToken: user.notificationToken,
+        notificationTokens: user.notificationTokens,
         name: user.name,
         birthday: user.birthday,
         updatedAt: new Date(),

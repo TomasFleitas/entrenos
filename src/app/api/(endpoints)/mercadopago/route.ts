@@ -127,11 +127,15 @@ export async function POST(req: NextRequest) {
         ),
       ]);
 
-      const notificationToken = recipient?.notificationToken;
-      if (notificationToken) {
-        await sendNotification(notificationToken, {
-          title: 'Nueva colaboración recibida',
-          body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
+      const tokens: string[] = Object.values(
+        recipient?.notificationTokens || {},
+      );
+      if (tokens.length) {
+        tokens.forEach((token) => {
+          sendNotification(token, {
+            title: 'Nueva colaboración recibida',
+            body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
+          });
         });
       }
     }

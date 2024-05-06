@@ -19,7 +19,13 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 
-import { auth, getToken, messaging, onMessage } from '@/utils/firebase';
+import {
+  auth,
+  getInstanceId,
+  getToken,
+  messaging,
+  onMessage,
+} from '@/utils/firebase';
 import axiosInstance from '@/services';
 import {
   RequestInterceptor,
@@ -64,16 +70,23 @@ export function AuthProvider({ children }: CommonReactProps) {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        await setPersistence(auth, browserLocalPersistence);
-        setToken(await user.getIdToken());
+        const [authToken, notificationToken, instanceId] = await Promise.all([
+          user.getIdToken(),
+          getNotificationToken(),
+          getInstanceId(),
+          setPersistence(auth, browserLocalPersistence),
+        ]);
 
-        const token = await getNotificationToken();
+        setToken(authToken);
 
         await updateUser({
           email: user.email,
           defaultName: user.displayName,
-          notificationToken: token,
+          notificationTokens: {
+            [instanceId]: notificationToken,
+          },
         });
+
         unsubscribeRequest = RequestInterceptor(user.getIdToken.bind(user));
         unsubscribeResponse = ResponseInterceptor(user.getIdToken.bind(user));
       } else {
@@ -105,12 +118,15 @@ export function AuthProvider({ children }: CommonReactProps) {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
       });
     }
+    return null;
   };
 
   const updateUser = async ({
     seed,
     ...data
-  }: Partial<User & { seed: string; notificationToken?: string }>) => {
+  }: Partial<
+    User & { seed: string; notificationTokens?: { [x: string]: string | null } }
+  >) => {
     setUpdating(true);
     const avatar = { seed };
 
@@ -152,7 +168,17 @@ export function AuthProvider({ children }: CommonReactProps) {
     }
   }, []);
 
-  const signOut = useCallback(() => logout(auth), []);
+  const signOut = useCallback(async () => {
+    const instanceId = await getInstanceId();
+
+    await updateUser({
+      notificationTokens: {
+        [instanceId]: null,
+      },
+    });
+
+    await logout(auth);
+  }, []);
 
   const value = useMemo(
     () => ({
