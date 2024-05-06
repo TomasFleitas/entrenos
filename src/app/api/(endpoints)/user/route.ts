@@ -32,6 +32,8 @@ export async function PUT(req: NextRequest) {
     const user: User & { notificationTokens?: { [x: string]: string | null } } =
       await req.json();
 
+    const oldUser = await UsersModel.findOne({ uid });
+
     await UsersModel.updateOne(
       { uid },
       {
@@ -39,7 +41,10 @@ export async function PUT(req: NextRequest) {
         defaultName: user.defaultName,
         email: user.email,
         avatar: user.avatar,
-        notificationTokens: user.notificationTokens,
+        notificationTokens: {
+          ...oldUser?.notificationTokens,
+          ...user.notificationTokens,
+        },
         name: user.name,
         birthday: user.birthday,
         updatedAt: new Date(),
