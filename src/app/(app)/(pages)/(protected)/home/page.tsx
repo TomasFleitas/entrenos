@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <div className={style.home}>
       <h1>
-        {(isFirst && 'Realiza tu primera donación') || 'Envía más donaciones'}
+        {(isFirst && 'Realiza tu primera colaboración.') || 'Continúa colaborando.'}
       </h1>
       <div className={style.amounts}>
         {AMOUNTS_OPTIONS.map((value) => (

@@ -27,11 +27,11 @@ export const Menu = () => {
     >
       <div className={style.list}>
         <Link onClick={() => openMenu(false)} href={'/home'}>
-          <HomeOutlined /> Home
+          <HomeOutlined /> Inicio
         </Link>
         <Link onClick={() => openMenu(false)} href={'/donations'}>
           <UnorderedListOutlined />
-          Donaciones
+          Colaboraciones
         </Link>
         <Link onClick={() => openMenu(false)} href={'/profile'}>
           <UserOutlined />

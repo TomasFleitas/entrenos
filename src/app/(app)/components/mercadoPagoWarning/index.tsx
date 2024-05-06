@@ -11,7 +11,7 @@ export const MercadoPagoWarning = () => {
     (!mpConnected && (
       <div className={style['mercado-pago-warning']}>
         No has configurado tu cuenta de Mercado Pago. Hasta que no la
-        configures, no podrás recibir donaciones.
+        configures, no podrás recibir colaboraciones.
         <div onClick={connectAccount}>
           <MercadoPagoIcon />
         </div>

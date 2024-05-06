@@ -10,8 +10,8 @@ export default function LandingPage() {
       <div>
         <h1>¡Colabora con personas de todo el país!</h1>
         <p>
-          Únete a nuestra red solidaria en tiempo real. Cada donación cuenta y
-          podría ser para ti. Mientras más dones, más oportunidades tendrás de
+          Únete a nuestra red solidaria en tiempo real. Cada colaboración cuenta y
+          podría ser para ti. Mientras más colabores, más oportunidades tendrás de
           recibir. ¡Únete ahora y forma parte de esta cadena de generosidad!
         </p>
         <Link className={style.link} href={'/login'}>
