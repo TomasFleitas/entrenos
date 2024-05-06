@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     }
 
     const exist = await UsersModel.exists({
-      mercadoPago: { user_id: data.user_id },
+      'mercadoPago.user_id': data.user_id,
     });
 
     if (!exist) {
