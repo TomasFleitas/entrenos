@@ -42,7 +42,7 @@ export async function PUT(req: NextRequest) {
         email: user.email,
         avatar: user.avatar,
         notificationTokens: {
-          ...oldUser?.notificationTokens?.values(),
+          ...Object.fromEntries(oldUser?.notificationTokens || new Map()),
           ...user.notificationTokens,
         },
         name: user.name,
