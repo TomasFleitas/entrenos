@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   try {
     const webHookData = await req.json();
 
-    console.log('WebHook MercadoPago:', webHookData);
+    console.log('WebHook MercadoPago - Data:', webHookData);
 
     if (webHookData.action === 'payment.created') {
       const paymentId = webHookData.data.id;
@@ -94,6 +94,8 @@ export async function POST(req: NextRequest) {
       );
       const payment = await response.json();
 
+      console.log('WebHook MercadoPago - Payment:', payment);
+
       const externalReference = JSON.parse(
         await descomprimirString(payment.external_reference as string),
       );
@@ -105,25 +107,25 @@ export async function POST(req: NextRequest) {
 
       const amount = payment.transaction_amount - fee;
 
-      await DonationsModel.create({
-        ...externalReference,
-        paymentId,
-        amount,
-      });
-
-      await UsersModel.updateOne(
-        { uid: externalReference.donorId },
-        {
-          lastDonationAt: new Date(),
-        },
-        {
-          upsert: true,
-        },
-      );
-
-      const recipient = await UsersModel.findOne({
-        uid: externalReference.recipientId,
-      });
+      const [recipient] = await Promise.all([
+        UsersModel.findOne({
+          uid: externalReference.recipientId,
+        }),
+        DonationsModel.create({
+          ...externalReference,
+          paymentId,
+          amount,
+        }),
+        UsersModel.updateOne(
+          { uid: externalReference.donorId },
+          {
+            lastDonationAt: new Date(),
+          },
+          {
+            upsert: true,
+          },
+        ),
+      ]);
 
       const notificationToken = recipient?.notificationToken;
       if (notificationToken) {
