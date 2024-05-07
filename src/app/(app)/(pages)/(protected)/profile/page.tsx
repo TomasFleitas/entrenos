@@ -6,6 +6,7 @@ import { Button, DatePicker, Divider, Form, Input } from 'antd';
 import style from './index.module.scss';
 import dayjs from 'dayjs';
 import { AvatarEditor } from '@/app/(app)/components/avatarEditor';
+import { NotificationPermission } from '@/app/(app)/components/notificationPermission';
 
 const { Item } = Form;
 
@@ -47,6 +48,8 @@ export default function ProfilePage() {
         </Item>
         <Divider>MERCADO PAGO</Divider>
         <ConnectMercadoPago />
+        <Divider>NOTIFICACIONES</Divider>
+        <NotificationPermission />
       </Form>
     </div>
   );

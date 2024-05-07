@@ -98,9 +98,15 @@ export function AuthProvider({ children }: CommonReactProps) {
 
   const getNotificationToken = async () => {
     if (messaging) {
-      return await getToken(messaging, {
-        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
-      });
+      if (Notification.permission === 'default') {
+        await Notification.requestPermission();
+      }
+
+      if (Notification.permission === 'granted') {
+        return await getToken(messaging, {
+          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
+        });
+      }
     }
     return null;
   };
