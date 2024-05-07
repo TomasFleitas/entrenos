@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     const isValidSignature = validateMercadoPagoNotification(
       req.headers,
-      req.nextUrl.searchParams.get('data.id') || webHookData.data.id,
+      req.nextUrl?.searchParams?.get('data.id') || webHookData?.data?.id,
     );
 
     if (!isValidSignature) {
