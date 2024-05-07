@@ -117,6 +117,7 @@ export async function POST(req: NextRequest) {
     const user = users[0];
 
     if (!user?.mercadoPago?.access_token) {
+      console.log('No one to donate.', user);
       return Response({ message: 'No one to donate.' }, 404);
     }
 
