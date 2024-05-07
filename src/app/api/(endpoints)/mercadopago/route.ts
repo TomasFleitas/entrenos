@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Response } from '../../utils';
+import { Response, validateMercadoPagoNotification } from '../../utils';
 import { sendNotification, validateToken } from '../../lib/firebaseAdmin';
 import { descomprimirString } from '../../lib/const';
 import { DonationsModel, UsersModel } from '@/app/(app)/mongo';
@@ -75,77 +75,90 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const webHookData = await req.json();
-
     console.log('WebHook MercadoPago - Data:', webHookData);
 
-    if (webHookData.action === 'payment.created') {
-      const paymentId = webHookData.data.id;
-      const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const isValidSignature = validateMercadoPagoNotification(
+      req.headers,
+      req.nextUrl.searchParams.get('data.id') || webHookData.data.id,
+    );
 
-      const response = await fetch(
-        `https://api.mercadopago.com/v1/payments/${paymentId}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      const payment = await response.json();
-
-      console.log('WebHook MercadoPago - Payment:', payment);
-
-      const externalReference = JSON.parse(
-        await descomprimirString(payment.external_reference as string),
-      );
-
-      const fee =
-        payment.charges_details.find(
-          ({ accounts }: any) => accounts.to === 'marketplace_owner',
-        )?.amounts?.original || 0;
-
-      const amount = payment.transaction_amount - fee;
-
-      const [recipient] = await Promise.all([
-        UsersModel.findOne({
-          uid: externalReference.recipientId,
-        }),
-        DonationsModel.create({
-          ...externalReference,
-          paymentId,
-          amount,
-        }),
-        UsersModel.updateOne(
-          { uid: externalReference.donorId },
-          {
-            lastDonationAt: new Date(),
-          },
-          {
-            upsert: true,
-          },
-        ),
-      ]);
-
-      const tokens = Object.values(
-        Object.fromEntries(recipient?.notificationTokens || new Map()) as {
-          [x: string]: string;
-        },
-      ).filter(Boolean);
-
-      if (tokens.length) {
-        sendNotification(tokens, {
-          title: 'Nueva colaboración recibida',
-          body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
-        });
-      }
+    if (!isValidSignature) {
+      return Response({ message: 'Invalid Mercado Pago signature' }, 401);
     }
+
+    processMercadoPagoWebHook(webHookData);
 
     return Response();
   } catch (error: any) {
+    console.error('Webhook Error:', error);
     return Response({ message: error.message }, error.status);
   }
 }
+
+const processMercadoPagoWebHook = async (webHookData: any) => {
+  if (webHookData.action === 'payment.created') {
+    const paymentId = webHookData.data.id;
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+
+    const response = await fetch(
+      `https://api.mercadopago.com/v1/payments/${paymentId}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const payment = await response.json();
+
+    console.log('WebHook MercadoPago - Payment:', payment);
+
+    const externalReference = JSON.parse(
+      await descomprimirString(payment.external_reference as string),
+    );
+
+    const fee =
+      payment.charges_details.find(
+        ({ accounts }: any) => accounts.to === 'marketplace_owner',
+      )?.amounts?.original || 0;
+
+    const amount = payment.transaction_amount - fee;
+
+    const [recipient] = await Promise.all([
+      UsersModel.findOne({
+        uid: externalReference.recipientId,
+      }),
+      DonationsModel.create({
+        ...externalReference,
+        paymentId,
+        amount,
+      }),
+      UsersModel.updateOne(
+        { uid: externalReference.donorId },
+        {
+          lastDonationAt: new Date(),
+        },
+        {
+          upsert: true,
+        },
+      ),
+    ]);
+
+    const tokens = Object.values(
+      Object.fromEntries(recipient?.notificationTokens || new Map()) as {
+        [x: string]: string;
+      },
+    ).filter(Boolean);
+
+    if (tokens.length) {
+      sendNotification(tokens, {
+        title: 'Nueva colaboración recibida',
+        body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
+      });
+    }
+  }
+};
 
 export async function PUT(req: NextRequest) {
   try {
