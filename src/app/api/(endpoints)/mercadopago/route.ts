@@ -114,6 +114,11 @@ const processMercadoPagoWebHook = async (webHookData: any) => {
 
     console.log('WebHook MercadoPago - Payment:', payment);
 
+    if (payment.status === 404) {
+      console.log('Payment Not Found, id: ', paymentId);
+      return;
+    }
+
     const externalReference = JSON.parse(
       await descomprimirString(payment.external_reference as string),
     );
