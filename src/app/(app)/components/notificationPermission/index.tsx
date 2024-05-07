@@ -19,7 +19,7 @@ export const NotificationPermission = () => {
   };
 
   return (
-    <div className={style.configuration}>
+    <div className={style['notification-config']}>
       {('default' === Notification.permission && (
         <p>
           Las notificaciones están deshabilitadas.{' '}
