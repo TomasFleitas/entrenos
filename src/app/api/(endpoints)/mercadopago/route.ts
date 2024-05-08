@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
       },
       {
         mercadoPago: { ...data, updatedAt: new Date() },
+        updatedAt: new Date(),
       },
       {
         new: true,
