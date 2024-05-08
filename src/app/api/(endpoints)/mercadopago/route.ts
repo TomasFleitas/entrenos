@@ -42,11 +42,20 @@ export async function GET(req: NextRequest) {
       return Response({ message: 'Error connecting with Mercado Pago.' }, 401);
     }
 
-    const exist = await UsersModel.exists({
-      'mercadoPago.user_id': data.user_id,
-    });
+    const user = await UsersModel.findOneAndUpdate(
+      {
+        'mercadoPago.user_id': data.user_id,
+      },
+      {
+        mercadoPago: data,
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
 
-    if (!exist) {
+    if (!user) {
       await UsersModel.updateOne(
         { uid },
         {
@@ -98,7 +107,18 @@ export async function POST(req: NextRequest) {
 const processMercadoPagoWebHook = async (webHookData: any) => {
   if (webHookData.action === 'payment.created') {
     const paymentId = webHookData.data.id;
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const mpUserId = webHookData.user_id;
+
+    const recipient = await UsersModel.findOne({
+      'mercadoPago.user_id': mpUserId,
+    });
+
+    const accessToken = recipient?.mercadoPago?.access_token;
+
+    if (!accessToken) {
+      console.log('Access Token Not Found, MP User: ', mpUserId);
+      return;
+    }
 
     const response = await fetch(
       `https://api.mercadopago.com/v1/payments/${paymentId}`,
@@ -130,10 +150,7 @@ const processMercadoPagoWebHook = async (webHookData: any) => {
 
     const amount = payment.transaction_amount - fee;
 
-    const [recipient] = await Promise.all([
-      UsersModel.findOne({
-        uid: externalReference.recipientId,
-      }),
+    await Promise.all([
       DonationsModel.create({
         ...externalReference,
         paymentId,
