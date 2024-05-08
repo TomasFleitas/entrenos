@@ -81,6 +81,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// TODO QUE PASA CON LOS TOPIC PAYMENT ? que vienen desde una colleciton 
 // WEBHOOK
 export async function POST(req: NextRequest) {
   try {
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     if (webHookData.topic === 'merchant_order ') {
       return Response();
     }
-    
+
     console.log('WebHook MercadoPago - Data:', webHookData);
 
     const isValidSignature = validateMercadoPagoNotification(

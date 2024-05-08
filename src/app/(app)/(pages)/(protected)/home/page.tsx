@@ -19,7 +19,8 @@ export default function HomePage() {
           'Continúa colaborando.'}
       </h1>
       <div className={style.amounts}>
-        {AMOUNTS_OPTIONS.map((value) => (
+        <p>En mantenimiento</p>
+        {/* {AMOUNTS_OPTIONS.map((value) => (
           <Button
             loading={sending}
             key={value}
@@ -29,7 +30,7 @@ export default function HomePage() {
           >
             {value}
           </Button>
-        ))}
+        ))} */}
       </div>
       {sending && (
         <p className={style['info-text']}>
