@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
         'mercadoPago.user_id': data.user_id,
       },
       {
-        mercadoPago: data,
+        mercadoPago: { ...data, updatedAt: new Date() },
       },
       {
         new: true,
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       await UsersModel.updateOne(
         { uid },
         {
-          mercadoPago: data,
+          mercadoPago: { ...data, updatedAt: new Date() },
           updatedAt: new Date(),
         },
         {
@@ -210,7 +210,7 @@ export async function PUT(req: NextRequest) {
     await UsersModel.updateOne(
       { uid },
       {
-        mercadoPago: data,
+        mercadoPago: { ...data, updatedAt: new Date() },
         updatedAt: new Date(),
       },
       {
