@@ -84,6 +84,7 @@ export async function GET(req: NextRequest) {
 // WEBHOOK
 export async function POST(req: NextRequest) {
   try {
+    console.log("ID: ", req.nextUrl?.searchParams?.get('id'),"TOPIC: ", req.nextUrl?.searchParams?.get('topic'))
     const webHookData = await req.json();
 
     if (webHookData.topic === 'merchant_order ') {
