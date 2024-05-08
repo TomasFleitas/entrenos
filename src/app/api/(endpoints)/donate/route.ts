@@ -26,7 +26,11 @@ export async function POST(req: NextRequest) {
       {
         $match: {
           uid: { $ne: uid },
-          mercadoPago: { $ne: null, $exists: true },
+          mercadoPago: {
+            $ne: null,
+            $exists: true,
+            access_token: { $ne: null, $exists: true },
+          },
           $or: [
             { lastDonationAt: { $exists: false } },
             {
