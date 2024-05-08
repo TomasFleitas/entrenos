@@ -26,10 +26,8 @@ export async function POST(req: NextRequest) {
       {
         $match: {
           uid: { $ne: uid },
-          mercadoPago: {
-            $ne: null,
+          'mercadoPago.access_token': {
             $exists: true,
-            access_token: { $ne: null, $exists: true },
           },
           $or: [
             { lastDonationAt: { $exists: false } },
