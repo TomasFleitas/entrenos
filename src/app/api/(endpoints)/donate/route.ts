@@ -121,6 +121,8 @@ export async function POST(req: NextRequest) {
       return Response({ message: 'No one to donate.' }, 404);
     }
 
+    console.log('User selected: ', user);
+
     let access_token = user.mercadoPago.access_token;
 
     const tokenReceivedAtMs = new Date(user.mercadoPago.updatedAt).getTime();
