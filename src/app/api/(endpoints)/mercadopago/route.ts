@@ -84,6 +84,10 @@ export async function GET(req: NextRequest) {
 // WEBHOOK
 export async function POST(req: NextRequest) {
   try {
+    if (req.nextUrl?.searchParams?.get('topic') === 'merchant_order ') {
+      return Response();
+    }
+
     const webHookData = await req.json();
     console.log('WebHook MercadoPago - Data:', webHookData);
 
@@ -106,7 +110,9 @@ export async function POST(req: NextRequest) {
 }
 
 const processMercadoPagoWebHook = async (webHookData: any) => {
-  if (webHookData.action === 'payment.created') {
+  if (['payment.updated', 'payment.created'].includes(webHookData.action)) {
+    const isUpdate = webHookData.action === 'payment.updated';
+
     const paymentId = webHookData.data.id;
     const mpUserId = webHookData.user_id;
 
@@ -152,33 +158,44 @@ const processMercadoPagoWebHook = async (webHookData: any) => {
     const amount = payment.transaction_amount - fee;
 
     await Promise.all([
-      DonationsModel.create({
-        ...externalReference,
-        paymentId,
-        amount,
-      }),
-      UsersModel.updateOne(
-        { uid: externalReference.donorId },
+      DonationsModel.updateOne(
+        { paymentId },
         {
-          lastDonationAt: new Date(),
+          ...externalReference,
+          paymentId,
+          amount,
+          timestamp: new Date(),
         },
         {
+          new: true,
           upsert: true,
         },
       ),
+      payment.status === 'approved' &&
+        UsersModel.updateOne(
+          { uid: externalReference.donorId },
+          {
+            lastDonationAt: new Date(),
+          },
+          {
+            upsert: true,
+          },
+        ),
     ]);
 
-    const tokens = Object.values(
-      Object.fromEntries(recipient?.notificationTokens || new Map()) as {
-        [x: string]: string;
-      },
-    ).filter(Boolean);
+    if (!isUpdate) {
+      const tokens = Object.values(
+        Object.fromEntries(recipient?.notificationTokens || new Map()) as {
+          [x: string]: string;
+        },
+      ).filter(Boolean);
 
-    if (tokens.length) {
-      sendNotification(tokens, {
-        title: 'Nueva colaboración recibida',
-        body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
-      });
+      if (tokens.length) {
+        sendNotification(tokens, {
+          title: 'Nueva colaboración recibida',
+          body: `Has recibido una nueva colaboración por un monto de $${amount}.`,
+        });
+      }
     }
   }
 };

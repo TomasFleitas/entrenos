@@ -13,6 +13,7 @@ const donationSchema = new mongoose.Schema({
 });
 
 donationSchema.index({ donorId: 'text' });
+donationSchema.index({ paymentId: 'text' });
 donationSchema.index({ recipientId: 'text' });
 donationSchema.index({ timestamp: 'desc' });
 
