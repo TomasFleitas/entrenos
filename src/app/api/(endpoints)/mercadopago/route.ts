@@ -84,11 +84,12 @@ export async function GET(req: NextRequest) {
 // WEBHOOK
 export async function POST(req: NextRequest) {
   try {
-    if (req.nextUrl?.searchParams?.get('topic') === 'merchant_order ') {
+    const webHookData = await req.json();
+
+    if (webHookData.topic === 'merchant_order ') {
       return Response();
     }
-
-    const webHookData = await req.json();
+    
     console.log('WebHook MercadoPago - Data:', webHookData);
 
     const isValidSignature = validateMercadoPagoNotification(
