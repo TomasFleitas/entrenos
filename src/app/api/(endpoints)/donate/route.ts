@@ -185,8 +185,7 @@ async function createMercadoPagoCheckoutLink(
   },
   extraInformation: { donorId: string; recipientId: string },
 ) {
-  const notification_url = `${process.env.APP_BASE_URL!}${process.env
-    .MERCADO_PAGO_WEBHOOK!}`;
+  const notification_url = process.env.MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL!;
 
   const success = `${process.env.APP_BASE_URL!}${process.env
     .MERCADO_PAGO_REDIRECT_URI_SUCCESS!}`;
