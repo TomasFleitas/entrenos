@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
 import { comprimirString } from '../../lib/const';
+import { User } from 'firebase/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,10 @@ export async function POST(req: NextRequest) {
 
     const currentTime = new Date();
 
+    const getAfterThan = new Date(
+      new Date().getTime() - daysThreshold * 86400000,
+    );
+
     const users = await UsersModel.aggregate([
       {
         $match: {
@@ -33,7 +38,7 @@ export async function POST(req: NextRequest) {
             { lastDonationAt: { $exists: false } },
             {
               lastDonationAt: {
-                $gt: new Date(new Date().getTime() - daysThreshold * 86400000),
+                $gt: getAfterThan,
               },
             },
           ],
@@ -42,8 +47,22 @@ export async function POST(req: NextRequest) {
       {
         $lookup: {
           from: DonationsModel.collection.name,
-          localField: 'uid',
-          foreignField: 'donorId',
+          let: { user_id: '$uid' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$donorId', '$$user_id'] },
+                    {
+                      $gt: ['$timestamp', getAfterThan],
+                    },
+                  ],
+                },
+              },
+            },
+            { $project: { amount: 1, timestamp: 1 } },
+          ],
           as: 'donations',
         },
       },
@@ -82,6 +101,7 @@ export async function POST(req: NextRequest) {
         $group: {
           _id: '$_id',
           uid: { $first: '$uid' },
+          defaultName: { $first: '$defaultName' },
           mercadoPago: { $first: '$mercadoPago' },
           totalDecayedDonations: { $sum: '$donations.decayedAmount' },
           lastDonationTime: { $max: '$donations.timestamp' },
@@ -113,17 +133,21 @@ export async function POST(req: NextRequest) {
       {
         $sort: { score: -1 },
       },
-      { $limit: 1 },
+      { $limit: 3 },
     ]);
 
-    const user = users[0];
+    const user = users?.[Math.floor(Math.random() * users?.length)];
 
     if (!user?.mercadoPago?.access_token) {
       console.log('No one to donate.', user);
       return Response({ message: 'No one to donate.' }, 404);
     }
 
-    console.log('User selected: ', user);
+    console.log(
+      'list:',
+      users.map(({ defaultName }) => `${defaultName} \n`),
+    );
+    console.log('User selected: ', user.defaultName);
 
     let access_token = user.mercadoPago.access_token;
 
