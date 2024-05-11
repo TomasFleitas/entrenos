@@ -42,18 +42,10 @@ export async function GET(req: NextRequest) {
       return Response({ message: 'Error connecting with Mercado Pago.' }, 401);
     }
 
-    const user = await UsersModel.findOneAndUpdate(
+    const user = await UsersModel.findOne(
       {
         'mercadoPago.user_id': data.user_id,
-      },
-      {
-        mercadoPago: { ...data, updatedAt: new Date() },
-        updatedAt: new Date(),
-      },
-      {
-        new: true,
-        upsert: true,
-      },
+      }
     );
 
     if (!user) {
@@ -68,6 +60,19 @@ export async function GET(req: NextRequest) {
         },
       );
     } else {
+      await UsersModel.updateOne(
+      {
+        'mercadoPago.user_id': data.user_id,
+      },
+      {
+        mercadoPago: { ...data, updatedAt: new Date() },
+        updatedAt: new Date(),
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
       return Response(
         { message: 'Mercado pago account already connected.' },
         400,

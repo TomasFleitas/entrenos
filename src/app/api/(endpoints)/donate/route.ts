@@ -241,7 +241,7 @@ async function createMercadoPagoCheckoutLink(
     auto_return: 'approved',
     binary_mode: true,
     external_reference: await comprimirString(JSON.stringify(extraInformation)),
-    marketplace: process.env.MERCADO_PAGO_CLIENT_ID,
+    marketplace: "EntreNos",
     marketplace_fee,
     notification_url,
     back_urls: {
