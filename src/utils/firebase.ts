@@ -6,7 +6,12 @@ import {
   isSupported,
   onMessage,
 } from 'firebase/messaging';
-import { getAuth } from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  getAuth,
+  setPersistence,
+} from 'firebase/auth';
 import { getId, getInstallations } from 'firebase/installations';
 
 // Initialize Firebase
@@ -25,6 +30,13 @@ const app = !getApps().length
   : getApp(process.env.NEXT_PUBLIC_APP_NAME);
 
 const auth = getAuth(app);
+
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error('Error setting Local persistence:', error);
+  setPersistence(auth, browserSessionPersistence).catch((error) => {
+    console.error('Error setting Session persistence:', error);
+  });
+});
 
 const installations = getInstallations(app);
 

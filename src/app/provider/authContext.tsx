@@ -14,8 +14,6 @@ import {
   onAuthStateChanged,
   signOut as logout,
   GoogleAuthProvider,
-  setPersistence,
-  browserLocalPersistence,
   signInWithPopup,
 } from 'firebase/auth';
 
@@ -68,7 +66,6 @@ export function AuthProvider({ children }: CommonReactProps) {
           user.getIdToken(),
           getNotificationToken(),
           getInstanceId(),
-          setPersistence(auth, browserLocalPersistence),
         ]);
 
         setToken(authToken);
