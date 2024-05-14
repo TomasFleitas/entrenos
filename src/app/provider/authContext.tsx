@@ -151,6 +151,7 @@ export function AuthProvider({ children }: CommonReactProps) {
       await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
       console.log(error);
+    } finally {
       setIsLogin(false);
     }
   }, []);
