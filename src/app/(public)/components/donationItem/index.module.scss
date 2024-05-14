@@ -1,24 +1,27 @@
 .donation {
   background-color: rgb(223, 223, 223);
-  display: flex;
+  display: grid;
   padding: 10px;
   border-radius: 10px;
   margin-bottom: 10px;
-  justify-content: space-between;
+  grid-template-columns: 1fr auto 1fr;
 
   > div:nth-child(1) {
     text-align: start;
+    justify-self: start;
     gap: 4px;
   }
 
   > div:nth-child(3) {
     text-align: end;
+    justify-self: end;
     gap: 4px;
   }
 
   > div {
     display: flex;
     align-items: center;
+    width: fit-content;
 
     .money {
       font-size: 20;
