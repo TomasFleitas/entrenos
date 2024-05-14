@@ -16,7 +16,7 @@ export default function LoginPage() {
         icon={<GoogleIcon height={25} width={25} />}
         loading={isLogin || loading}
         disabled={!allowed}
-        onClick={signInWithGoogle}
+        onClick={()=>allowed && signInWithGoogle()}
       >
         INICIAR SESIÓN
       </Button>
