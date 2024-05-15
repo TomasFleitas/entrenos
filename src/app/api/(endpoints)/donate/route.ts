@@ -15,6 +15,7 @@ import {
   MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL,
   getAfterThan,
   COMMON_ALGORITHM_SECOND_THIRD,
+  ENV,
 } from '../../utils/const';
 
 export const dynamic = 'force-dynamic';
@@ -106,7 +107,10 @@ export async function POST(req: NextRequest) {
       { donorId: uid, recipientId: user.uid },
     );
 
-    return Response({ url: checkoutUrl });
+    if (ENV === 'dev') {
+      return Response({ url: checkoutUrl });
+    }
+    return NextResponse.redirect(checkoutUrl);
   } catch (error: any) {
     console.log(error);
     return Response({ message: error.message }, error.status);
