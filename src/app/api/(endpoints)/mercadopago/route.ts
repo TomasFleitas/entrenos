@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Response, validateMercadoPagoNotification } from '../../utils';
 import { sendNotification, validateToken } from '../../lib/firebaseAdmin';
-import { descomprimirString } from '../../lib/const';
+import { descomprimirString } from '../../lib';
 import { DonationsModel, UsersModel } from '@/app/(app)/mongo';
 import {
   APP_BASE_URL,

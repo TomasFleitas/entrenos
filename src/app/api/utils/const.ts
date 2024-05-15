@@ -19,6 +19,7 @@ export const {
   MERCADO_PAGO_FEE: mercadoPagoFee = '5',
   MERCADO_PAGO_WEBHOOK_SECRET,
   APP_BASE_URL,
+  DONATION_EXCLUDE_INTERVAL_HOURS,
 } = process.env;
 
 export const DECAY_RATE = parseFloat(decayRate);
@@ -29,6 +30,11 @@ export const MERCADO_PAGO_FEE = parseFloat(mercadoPagoFee);
 
 export const getAfterThan = new Date(
   new Date().getTime() - DAYS_THRESHOLD * 86400000,
+);
+
+export const oneHourAgo = new Date(
+  Date.now() -
+    parseInt(DONATION_EXCLUDE_INTERVAL_HOURS || '1', 10) * 60 * 60 * 1000,
 );
 
 export const COMMON_ALGORITHM_FIRST_PART = (donationName: string) => [
