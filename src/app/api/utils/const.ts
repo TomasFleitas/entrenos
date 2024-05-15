@@ -19,7 +19,6 @@ export const {
   MERCADO_PAGO_FEE: mercadoPagoFee = '5',
   MERCADO_PAGO_WEBHOOK_SECRET,
   APP_BASE_URL,
-  ENV
 } = process.env;
 
 export const DECAY_RATE = parseFloat(decayRate);
