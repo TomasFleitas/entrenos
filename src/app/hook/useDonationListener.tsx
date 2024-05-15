@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { User } from 'firebase/auth';
+import { NEXT_PUBLIC_SOCKET_URL } from '@/utils/const';
 
 export type TDonation = {
   donor: {
@@ -33,7 +34,7 @@ export const useDonationWatch = () => {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}/donations`, {
+    const socket = io(`${NEXT_PUBLIC_SOCKET_URL}/donations`, {
       withCredentials: true,
     });
 

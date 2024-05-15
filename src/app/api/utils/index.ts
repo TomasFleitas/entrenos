@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { MERCADO_PAGO_WEBHOOK_SECRET } from './const';
 
 export const Response = (data: any = undefined, status = 200) =>
   new NextResponse(data && JSON.stringify(data), {
@@ -13,7 +14,8 @@ export const validateMercadoPagoNotification = (
   headers: Headers,
   dataId: string,
 ): boolean => {
-  if (!process.env.MERCADO_PAGO_WEBHOOK_SECRET) {
+
+  if (!MERCADO_PAGO_WEBHOOK_SECRET) {
     return false;
   }
 
@@ -24,7 +26,7 @@ export const validateMercadoPagoNotification = (
   );
   const signatureTemplateParsed = `id:${dataId};request-id:${xRequestIdHeader};ts:${xSignature?.ts};`;
   const cyphedSignature = crypto
-    .createHmac('sha256', process.env.MERCADO_PAGO_WEBHOOK_SECRET)
+    .createHmac('sha256', MERCADO_PAGO_WEBHOOK_SECRET)
     .update(signatureTemplateParsed)
     .digest('hex');
 

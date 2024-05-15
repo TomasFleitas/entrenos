@@ -3,7 +3,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
 import { comprimirString } from '../../lib/const';
-import { User } from 'firebase/auth';
+import {
+  APP_BASE_URL,
+  COMMON_ALGORITHM_SECOND_PART,
+  COMMON_ALGORITHM_FIRST_PART,
+  DONATE_SLOTS,
+  DONATION_TITLE,
+  MERCADO_PAGO_FEE,
+  MERCADO_PAGO_FEE_MODE,
+  MERCADO_PAGO_REDIRECT_URI_SUCCESS,
+  MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL,
+  getAfterThan,
+  COMMON_ALGORITHM_SECOND_THIRD,
+} from '../../utils/const';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,17 +27,9 @@ export async function POST(req: NextRequest) {
 
     const { amount: unit_price } = await req.json();
 
-    const decayRate = parseFloat(process.env.DECAY_RATE || '1');
-    const daysToDecay = parseFloat(process.env.DAYS_TO_DECAY || '30');
-    const daysThreshold = parseInt(process.env.DAYS_THRESHOLD || '30');
-
     await mongo.init();
 
     const currentTime = new Date();
-
-    const getAfterThan = new Date(
-      new Date().getTime() - daysThreshold * 86400000,
-    );
 
     const users = await UsersModel.aggregate([
       {
@@ -44,96 +48,13 @@ export async function POST(req: NextRequest) {
           ],
         },
       },
-      {
-        $lookup: {
-          from: DonationsModel.collection.name,
-          let: { user_id: '$uid' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$donorId', '$$user_id'] },
-                    {
-                      $gt: ['$timestamp', getAfterThan],
-                    },
-                  ],
-                },
-              },
-            },
-            { $project: { amount: 1, timestamp: 1 } },
-          ],
-          as: 'donations',
-        },
-      },
-      {
-        $unwind: {
-          path: '$donations',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $addFields: {
-          'donations.decayedAmount': {
-            $multiply: [
-              '$donations.amount',
-              {
-                $pow: [
-                  Math.E,
-                  {
-                    $multiply: [
-                      -decayRate,
-                      {
-                        $divide: [
-                          { $subtract: [new Date(), '$donations.timestamp'] },
-                          86400000 * daysToDecay,
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          uid: { $first: '$uid' },
-          defaultName: { $first: '$defaultName' },
-          mercadoPago: { $first: '$mercadoPago' },
-          totalDecayedDonations: { $sum: '$donations.decayedAmount' },
-          lastDonationTime: { $max: '$donations.timestamp' },
-        },
-      },
-      {
-        $addFields: {
-          timeSinceLastDonation: {
-            $divide: [
-              { $subtract: [new Date(), '$lastDonationTime'] },
-              86400000,
-            ],
-          },
-        },
-      },
-      {
-        $addFields: {
-          score: {
-            $multiply: [
-              '$totalDecayedDonations',
-              {
-                $pow: [Math.E, { $multiply: [-0.1, '$timeSinceLastDonation'] }],
-              },
-              { $rand: {} },
-            ],
-          },
-        },
-      },
+      ...COMMON_ALGORITHM_FIRST_PART(DonationsModel.collection.name),
+      ...COMMON_ALGORITHM_SECOND_PART(),
+      ...COMMON_ALGORITHM_SECOND_THIRD(true),
       {
         $sort: { score: -1 },
       },
-      { $limit: 3 },
+      { $limit: DONATE_SLOTS },
     ]);
 
     const user = users?.[Math.floor(Math.random() * users?.length)];
@@ -142,12 +63,6 @@ export async function POST(req: NextRequest) {
       console.log('No one to donate.', user);
       return Response({ message: 'No one to donate.' }, 404);
     }
-
-    console.log(
-      'list:',
-      users.map(({ defaultName }) => `${defaultName} \n`),
-    );
-    console.log('User selected: ', user.defaultName);
 
     let access_token = user.mercadoPago.access_token;
 
@@ -183,7 +98,7 @@ export async function POST(req: NextRequest) {
       access_token,
       {
         id: '1',
-        title: process.env.DONATION_TITLE || 'Titulo',
+        title: DONATION_TITLE,
         quantity: 1,
         unit_price,
         category_id: 'donations',
@@ -209,21 +124,15 @@ async function createMercadoPagoCheckoutLink(
   },
   extraInformation: { donorId: string; recipientId: string },
 ) {
-  const notification_url = process.env.MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL!;
-
-  const success = `${process.env.APP_BASE_URL!}${process.env
-    .MERCADO_PAGO_REDIRECT_URI_SUCCESS!}`;
+  const success = `${APP_BASE_URL}${MERCADO_PAGO_REDIRECT_URI_SUCCESS}`;
 
   const mode =
-    process.env.MERCADO_PAGO_FEE_MODE === 'fixed'
-      ? process.env.MERCADO_PAGO_FEE_MODE
-      : 'porcentage';
+    MERCADO_PAGO_FEE_MODE === 'fixed' ? MERCADO_PAGO_FEE_MODE : 'porcentage';
 
   const marketplace_fee =
     mode === 'porcentage'
-      ? item.unit_price *
-        (parseFloat(process.env.MERCADO_PAGO_FEE || '5') / 100)
-      : parseFloat(process.env.MERCADO_PAGO_FEE || '5');
+      ? item.unit_price * (MERCADO_PAGO_FEE / 100)
+      : MERCADO_PAGO_FEE;
 
   const url = 'https://api.mercadopago.com/checkout/preferences';
 
@@ -241,9 +150,9 @@ async function createMercadoPagoCheckoutLink(
     auto_return: 'approved',
     binary_mode: true,
     external_reference: await comprimirString(JSON.stringify(extraInformation)),
-    marketplace: "EntreNos",
+    marketplace: 'EntreNos',
     marketplace_fee,
-    notification_url,
+    notification_url: MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL,
     back_urls: {
       success,
     },

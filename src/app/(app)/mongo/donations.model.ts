@@ -1,6 +1,6 @@
 import mongoose from './connection';
 
-if (mongoose.models.Donations) {
+if (mongoose.models?.Donations) {
   delete mongoose.models.Donations;
 }
 

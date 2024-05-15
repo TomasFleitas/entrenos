@@ -25,6 +25,7 @@ import {
   setToken,
 } from '@/services/interceptors';
 import { Loading } from '../components/loading';
+import { NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION } from '@/utils/const';
 
 type TAuthContext = {
   user?: User | null;
@@ -101,7 +102,7 @@ export function AuthProvider({ children }: CommonReactProps) {
 
       if (Notification.permission === 'granted') {
         return await getToken(messaging, {
-          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
+          vapidKey: NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION,
         });
       }
     }

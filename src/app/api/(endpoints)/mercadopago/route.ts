@@ -3,15 +3,21 @@ import { Response, validateMercadoPagoNotification } from '../../utils';
 import { sendNotification, validateToken } from '../../lib/firebaseAdmin';
 import { descomprimirString } from '../../lib/const';
 import { DonationsModel, UsersModel } from '@/app/(app)/mongo';
+import {
+  APP_BASE_URL,
+  MERCADO_PAGO_CLIENT_ID,
+  MERCADO_PAGO_CLIENT_SECRET,
+  MERCADO_PAGO_REDIRECT_URI,
+  MERCADO_PAGO_WEBHOOK,
+} from '../../utils/const';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');
   const uid = req.nextUrl.searchParams.get('state');
-  const baseUrl = process.env.APP_BASE_URL!;
 
-  const redirectUri = `${baseUrl}${process.env.MERCADO_PAGO_REDIRECT_URI!}`;
+  const redirectUri = `${APP_BASE_URL}${MERCADO_PAGO_REDIRECT_URI}`;
 
   if (!code || !uid) {
     /*  return Response({ message: 'Code no provided.' }, 404); */
@@ -19,20 +25,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(redirectUri);
   }
 
-  const CLIENT_ID = process.env.MERCADO_PAGO_CLIENT_ID!;
-  const CLIENT_SECRET = process.env.MERCADO_PAGO_CLIENT_SECRET!;
-  const REDIRECT_URI = `${baseUrl}${process.env.MERCADO_PAGO_WEBHOOK!}`;
-
   try {
     const response = await fetch('https://api.mercadopago.com/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: JSON.stringify({
         grant_type: 'authorization_code',
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+        client_id: MERCADO_PAGO_CLIENT_ID,
+        client_secret: MERCADO_PAGO_CLIENT_SECRET,
         code: code,
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: `${APP_BASE_URL}${MERCADO_PAGO_WEBHOOK}`,
       }),
     });
 
@@ -42,11 +44,9 @@ export async function GET(req: NextRequest) {
       return Response({ message: 'Error connecting with Mercado Pago.' }, 401);
     }
 
-    const user = await UsersModel.findOne(
-      {
-        'mercadoPago.user_id': data.user_id,
-      }
-    );
+    const user = await UsersModel.findOne({
+      'mercadoPago.user_id': data.user_id,
+    });
 
     if (!user) {
       await UsersModel.updateOne(
@@ -61,18 +61,18 @@ export async function GET(req: NextRequest) {
       );
     } else {
       await UsersModel.updateOne(
-      {
-        'mercadoPago.user_id': data.user_id,
-      },
-      {
-        mercadoPago: { ...data, updatedAt: new Date() },
-        updatedAt: new Date(),
-      },
-      {
-        new: true,
-        upsert: true,
-      },
-    );
+        {
+          'mercadoPago.user_id': data.user_id,
+        },
+        {
+          mercadoPago: { ...data, updatedAt: new Date() },
+          updatedAt: new Date(),
+        },
+        {
+          new: true,
+          upsert: true,
+        },
+      );
       return Response(
         { message: 'Mercado pago account already connected.' },
         400,
@@ -86,11 +86,16 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// TODO QUE PASA CON LOS TOPIC PAYMENT ? que vienen desde una colleciton 
+// TODO QUE PASA CON LOS TOPIC PAYMENT ? que vienen desde una colleciton
 // WEBHOOK
 export async function POST(req: NextRequest) {
   try {
-    console.log("ID: ", req.nextUrl?.searchParams?.get('id'),"TOPIC: ", req.nextUrl?.searchParams?.get('topic'))
+    console.log(
+      'ID: ',
+      req.nextUrl?.searchParams?.get('id'),
+      'TOPIC: ',
+      req.nextUrl?.searchParams?.get('topic'),
+    );
     const webHookData = await req.json();
 
     if (webHookData.topic === 'merchant_order ') {
@@ -210,9 +215,6 @@ const processMercadoPagoWebHook = async (webHookData: any) => {
 
 export async function PUT(req: NextRequest) {
   try {
-    const CLIENT_ID = process.env.MERCADO_PAGO_CLIENT_ID!;
-    const CLIENT_SECRET = process.env.MERCADO_PAGO_CLIENT_SECRET!;
-
     const { uid } = await req.json();
     const user = await UsersModel.findOne({ uid });
 
@@ -221,8 +223,8 @@ export async function PUT(req: NextRequest) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: JSON.stringify({
         grant_type: 'refresh_token',
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+        client_id: MERCADO_PAGO_CLIENT_ID,
+        client_secret: MERCADO_PAGO_CLIENT_SECRET,
         refresh_token: user?.mercadoPago?.refresh_token,
       }),
     });

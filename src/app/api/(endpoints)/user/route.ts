@@ -4,6 +4,11 @@ import type { NextRequest } from 'next/server';
 import { Response } from '../../utils';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { UserResponse } from 'mercadopago/dist/clients/user/get/types';
+import {
+  COMMON_ALGORITHM_SECOND_PART,
+  COMMON_ALGORITHM_FIRST_PART,
+  COMMON_ALGORITHM_SECOND_THIRD,
+} from '../../utils/const';
 
 const mongo = new MongoConnection();
 
@@ -65,75 +70,29 @@ export async function PUT(req: NextRequest) {
 }
 
 const getUserById = async (uid: string) => {
-  const decayRate = parseFloat(process.env.DECAY_RATE || '1');
-  const daysToDecay = parseFloat(process.env.DAYS_TO_DECAY || '30');
-
   const users = await UsersModel.aggregate([
     {
       $match: {
         uid,
       },
     },
-    {
-      $lookup: {
-        from: DonationsModel.collection.name,
-        localField: 'uid',
-        foreignField: 'donorId',
-        as: 'donations',
-      },
-    },
-    {
-      $unwind: {
-        path: '$donations',
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $addFields: {
-        'donations.decayedAmount': {
-          $multiply: [
-            '$donations.amount',
-            {
-              $pow: [
-                Math.E,
-                {
-                  $multiply: [
-                    -decayRate,
-                    {
-                      $divide: [
-                        { $subtract: [new Date(), '$donations.timestamp'] },
-                        86400000 * daysToDecay,
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
+    ...COMMON_ALGORITHM_FIRST_PART(DonationsModel.collection.name),
+    ...COMMON_ALGORITHM_SECOND_PART({
+      email: { $first: '$email' },
+      name: { $first: '$name' },
+      defaultName: { $first: '$defaultName' },
+      birthday: { $first: '$birthday' },
+      updatedAt: { $first: '$updatedAt' },
+      createdAt: { $first: '$createdAt' },
+      avatar: { $first: '$avatar' },
+      donations: {
+        $push: {
+          amount: '$donations.amount',
+          timestamp: '$donations.timestamp',
         },
       },
-    },
-    {
-      $group: {
-        _id: '$_id',
-        uid: { $first: '$uid' },
-        email: { $first: '$email' },
-        name: { $first: '$name' },
-        defaultName: { $first: '$defaultName' },
-        birthday: { $first: '$birthday' },
-        updatedAt: { $first: '$updatedAt' },
-        mercadoPago: { $first: '$mercadoPago' },
-        createdAt: { $first: '$createdAt' },
-        avatar: { $first: '$avatar' },
-        donations: {
-          $push: {
-            amount: '$donations.amount',
-            timestamp: '$donations.timestamp',
-          },
-        },
-        totalDecayedDonations: { $sum: '$donations.decayedAmount' },
-      },
-    },
+    }),
+    ...COMMON_ALGORITHM_SECOND_THIRD(false),
     {
       $project: {
         _id: 0,
@@ -147,7 +106,7 @@ const getUserById = async (uid: string) => {
         createdAt: 1,
         donations: 1,
         avatar: 1,
-        score: '$totalDecayedDonations',
+        score: 1,
       },
     },
   ]);

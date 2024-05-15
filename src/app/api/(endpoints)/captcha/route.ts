@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Response } from '../../utils';
+import { RECAPTCHA_SECRET_KEY } from '../../utils/const';
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const { recaptchaToken } = await req.json();
 
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`;
+    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`;
 
     const response = await fetch(verificationUrl, {
       method: 'POST',

@@ -1,6 +1,6 @@
 import mongoose from './connection';
 
-if (mongoose.models.Users) {
+if (mongoose.models?.Users) {
   delete mongoose.models.Users;
 }
 

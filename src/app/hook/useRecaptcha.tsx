@@ -1,4 +1,5 @@
 import axiosInstance from '@/services';
+import { NEXT_PUBLIC_RECAPTCHA_SITE_KEY } from '@/utils/const';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
@@ -36,7 +37,7 @@ export const useRecaptcha = () => {
 
   const Captcha = (
     <ReCAPTCHA
-      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+      sitekey={NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
       size="invisible"
       ref={recaptchaRef}
     />
