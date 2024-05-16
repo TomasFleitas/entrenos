@@ -14,7 +14,7 @@ import {
   onAuthStateChanged,
   signOut as logout,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
 } from 'firebase/auth';
 
 import { auth, getInstanceId, getToken, messaging } from '@/utils/firebase';
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: CommonReactProps) {
   const signInWithGoogle = useCallback(async () => {
     setIsLogin(true);
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      await signInWithRedirect(auth, new GoogleAuthProvider());
     } catch (error) {
       console.log(error);
     } finally {
