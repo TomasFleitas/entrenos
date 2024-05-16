@@ -3,7 +3,7 @@
 import { useDonation } from '@/app/hook/useDonation';
 import { useEffect, useState } from 'react';
 import style from './index.module.scss';
-import { Select, FloatButton } from 'antd';
+import { Select, FloatButton, Empty } from 'antd';
 import { SingleDonationItem } from '@/app/(app)/components/singleDonation';
 import { useObservable } from '@/app/hook/useObservable';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -26,6 +26,14 @@ export default function DonationsPage() {
   useEffect(() => {
     getDonations({ size, type: direction });
   }, [direction, size]);
+
+  if (loading && !donations.length) {
+    return (
+      <div className={style['donation-list']}>
+        <LoadingOutlined className={style.loading} spin />
+      </div>
+    );
+  }
 
   return (
     <div className={style['donation-list']}>
@@ -50,8 +58,11 @@ export default function DonationsPage() {
           <Option value={50}>50</Option>
         </Select>
       </div>
-      {(loading && !donations.length && (
-        <LoadingOutlined className={style.loading} spin />
+      {(!loading && !donations.length && (
+        <Empty
+          className={style.empty}
+          description="Sin colaboraciones registradas"
+        />
       )) || (
         <div className={style.list}>
           {donations.map((donation, index) => {
