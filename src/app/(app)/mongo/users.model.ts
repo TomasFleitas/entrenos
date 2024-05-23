@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     seed: String,
+    avatarStyle: String,
   },
   mercadoPago: {
     access_token: String,

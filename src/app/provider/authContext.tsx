@@ -118,14 +118,25 @@ export function AuthProvider({ children }: CommonReactProps) {
 
   const updateUser = async ({
     seed,
+    avatarStyle,
     ...data
   }: Partial<
-    User & { seed: string; notificationTokens?: { [x: string]: string | null } }
+    User & {
+      seed: string;
+      avatarStyle?: string;
+      notificationTokens?: { [x: string]: string | null };
+    }
   >) => {
     setUpdating(true);
-    const avatar = { seed };
+    const avatar = { seed, avatarStyle };
 
     const isAvatar = Object.values(avatar).filter(Boolean).length;
+
+    // Data validation
+    data.name = data.name?.slice(0, 20);
+    if (isAvatar && avatar.seed) {
+      avatar.seed = avatar.seed.slice(0, 80);
+    }
 
     const { user: updatedUser } =
       (

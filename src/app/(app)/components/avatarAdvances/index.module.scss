@@ -1,0 +1,15 @@
+.avatar {
+  height: 150px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  > span {
+    height: 100%;
+    width: 150px;
+  }
+}
+
+.select {
+  flex-direction: column;
+}

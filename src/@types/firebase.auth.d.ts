@@ -13,6 +13,7 @@ declare module 'firebase/auth' {
     mercadoPagoAccount?: MercadoPagoAccountDetail;
     avatar?: {
       seed?: string;
+      avatarStyle?: string;
     };
     uid: string;
     createdAt: string;

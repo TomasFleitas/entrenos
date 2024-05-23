@@ -1,15 +1,19 @@
 import { createAvatar } from '@dicebear/core';
-import { lorelei } from '@dicebear/collection';
 import { Avatar } from 'antd';
 import style from './index.module.scss';
+import { avatarCollections } from '../avatarAdvances';
 
 type Props = {
   seed?: string;
+  avatarStyle?: string;
 };
 
-export const UserAvatar = (param: Props) => (
+export const UserAvatar = ({ avatarStyle, ...rest }: Props) => (
   <Avatar
     className={style.avatar}
-    src={createAvatar(lorelei, param).toDataUriSync()}
+    src={createAvatar(
+      avatarCollections?.[avatarStyle || 'lorelei'],
+      rest,
+    ).toDataUriSync()}
   />
 );
