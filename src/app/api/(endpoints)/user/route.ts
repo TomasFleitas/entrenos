@@ -45,7 +45,10 @@ export async function PUT(req: NextRequest) {
         uid,
         defaultName: user.defaultName,
         email: user.email,
-        avatar: { ...oldUser, ...user.avatar },
+        avatar: {
+          ...(oldUser?.avatar || {}),
+          ...user.avatar,
+        },
         notificationTokens: {
           ...Object.fromEntries(oldUser?.notificationTokens || new Map()),
           ...user.notificationTokens,
