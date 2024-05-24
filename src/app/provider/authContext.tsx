@@ -73,6 +73,7 @@ export function AuthProvider({ children }: CommonReactProps) {
         setToken(authToken);
 
         await updateUser({
+          invitedBy: sessionStorage.getItem('invitedBy') ?? undefined,
           email: user.email,
           defaultName: user.displayName,
           notificationTokens: {
@@ -147,6 +148,8 @@ export function AuthProvider({ children }: CommonReactProps) {
           })
           .catch(() => null)
       )?.data || {};
+
+    sessionStorage.removeItem('invitedBy');
 
     setAuthData((prev) => {
       const newUser: AuthData = {

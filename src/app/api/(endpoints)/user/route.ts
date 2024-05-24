@@ -37,12 +37,21 @@ export async function PUT(req: NextRequest) {
     const user: User & { notificationTokens?: { [x: string]: string | null } } =
       await req.json();
 
+    let invitedBy;
+    if (user.invitedBy) {
+      const exist = await UsersModel.exists({ uid: user.invitedBy });
+      if (exist) {
+        invitedBy = user.invitedBy;
+      }
+    }
+
     const oldUser = await UsersModel.findOne({ uid });
 
     await UsersModel.updateOne(
       { uid },
       {
         uid,
+        ...(!oldUser && { invitedBy }),
         defaultName: user.defaultName,
         email: user.email,
         avatar: {

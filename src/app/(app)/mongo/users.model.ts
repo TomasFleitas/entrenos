@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     seed: String,
     avatarStyle: String,
   },
+  invitedBy: { type: String, trim: true, default: null },
+  hasDonatedToFriend: { type: Boolean, default: false },
   mercadoPago: {
     access_token: String,
     expires_in: Number,

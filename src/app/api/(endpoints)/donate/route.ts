@@ -1,21 +1,15 @@
-import { UsersModel, MongoConnection, DonationsModel } from '@/app/(app)/mongo';
+import { MongoConnection, UsersModel } from '@/app/(app)/mongo';
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
 import { comprimirString, getUserToDonate } from '../../lib';
 import {
   APP_BASE_URL,
-  COMMON_ALGORITHM_SECOND_PART,
-  COMMON_ALGORITHM_FIRST_PART,
-  DONATE_SLOTS,
   DONATION_TITLE,
   MERCADO_PAGO_FEE,
   MERCADO_PAGO_FEE_MODE,
   MERCADO_PAGO_REDIRECT_URI_SUCCESS,
   MERCADO_PAGO_WEBHOOK_NOTIFICATION_URL,
-  getAfterThan,
-  COMMON_ALGORITHM_SECOND_THIRD,
-  oneHourAgo,
 } from '../../utils/const';
 
 export const dynamic = 'force-dynamic';
@@ -32,13 +26,19 @@ export async function POST(req: NextRequest) {
 
     const currentTime = new Date();
 
-    let users = await getUserToDonate(uid);
-
-    if (!users.length) {
-      users = await getUserToDonate(uid, true);
+    const currentUser = await UsersModel.findOne({ uid });
+    let user = null;
+    if (currentUser?.invitedBy && !currentUser.hasDonatedToFriend) {
+      user = await UsersModel.findOne({ uid: currentUser.invitedBy });
     }
 
-    const user = users?.[Math.floor(Math.random() * users?.length)];
+    if (!user || !user?.mercadoPago?.access_token) {
+      let users = await getUserToDonate(uid);
+      if (!users.length) {
+        users = await getUserToDonate(uid, true);
+      }
+      user = users?.[Math.floor(Math.random() * users?.length)];
+    }
 
     if (!user?.mercadoPago?.access_token) {
       console.log('No one to donate.', user);
@@ -103,7 +103,10 @@ async function createMercadoPagoCheckoutLink(
     unit_price: number;
     category_id: string;
   },
-  extraInformation: { donorId: string; recipientId: string },
+  extraInformation: {
+    donorId: string;
+    recipientId: string;
+  },
 ) {
   const success = `${APP_BASE_URL}${MERCADO_PAGO_REDIRECT_URI_SUCCESS}`;
 

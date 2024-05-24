@@ -9,6 +9,8 @@ declare module 'firebase/auth' {
       public_key: string;
     };
     isFirstDonation: boolean;
+    invitedBy?: string;
+    hasDonatedToFriend?: boolean;
     mpConnected: boolean;
     mercadoPagoAccount?: MercadoPagoAccountDetail;
     avatar?: {

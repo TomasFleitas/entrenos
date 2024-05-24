@@ -7,6 +7,7 @@ import style from './index.module.scss';
 import dayjs from 'dayjs';
 import { AvatarEditor } from '@/app/(app)/components/avatarEditor';
 import { NotificationPermission } from '@/app/(app)/components/notificationPermission';
+import { InviteFriend } from '@/app/(app)/components/inviteFriend';
 
 const { Item } = Form;
 
@@ -49,6 +50,8 @@ export default function ProfilePage() {
         </Item>
         <Divider>MERCADO PAGO</Divider>
         <ConnectMercadoPago />
+        {/* <Divider>INVITAR AMIGOS</Divider>
+        <InviteFriend /> */}
         <Divider>NOTIFICACIONES</Divider>
         <NotificationPermission />
       </Form>
