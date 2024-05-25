@@ -40,7 +40,5 @@ export async function GET(
     path: '/',
   });
 
-  console.log('ENTRANDOOOO   =>   ', resp);
-
   return Response({ friend });
 }
