@@ -1,16 +1,23 @@
+'use client';
+
 import { createAvatar } from '@dicebear/core';
 import { Avatar } from 'antd';
 import style from './index.module.scss';
-import { avatarCollections } from '../avatarAdvances';
+import { avatarCollections } from '@/utils/const';
 
 type Props = {
   seed?: string;
   avatarStyle?: string;
+  type?: 'common' | 'big';
 };
 
-export const UserAvatar = ({ avatarStyle, ...rest }: Props) => (
+export const UserAvatar = ({
+  avatarStyle,
+  type = 'common',
+  ...rest
+}: Props) => (
   <Avatar
-    className={style.avatar}
+    className={`${style.avatar} ${style[type]}`}
     src={createAvatar(
       avatarCollections?.[avatarStyle || 'lorelei'],
       rest,

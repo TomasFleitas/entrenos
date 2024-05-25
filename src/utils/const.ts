@@ -1,3 +1,30 @@
+import {
+  lorelei,
+  adventurer,
+  adventurerNeutral,
+  avataaars,
+  avataaarsNeutral,
+  bigEars,
+  bigEarsNeutral,
+  bigSmile,
+  bottts,
+  botttsNeutral,
+  croodles,
+  croodlesNeutral,
+  funEmoji,
+  icons,
+  identicon,
+  loreleiNeutral,
+  micah,
+  miniavs,
+  openPeeps,
+  personas,
+  pixelArt,
+  pixelArtNeutral,
+  shapes,
+  thumbs,
+} from '@dicebear/collection';
+
 export const NEXT_PUBLIC_MERCADO_PAGO_CALLBACK =
   process.env.NEXT_PUBLIC_MERCADO_PAGO_CALLBACK;
 export const NEXT_PUBLIC_SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
@@ -28,3 +55,30 @@ export const AMOUNTS_OPTIONS = (
 )
   .split('|')
   .map(Number);
+
+export const avatarCollections: { [key: string]: any } = {
+  lorelei,
+  adventurer,
+  adventurerNeutral,
+  avataaars,
+  avataaarsNeutral,
+  bigEars,
+  bigEarsNeutral,
+  bigSmile,
+  bottts,
+  botttsNeutral,
+  croodles,
+  croodlesNeutral,
+  funEmoji,
+  icons,
+  identicon,
+  loreleiNeutral,
+  micah,
+  miniavs,
+  openPeeps,
+  personas,
+  pixelArt,
+  pixelArtNeutral,
+  shapes,
+  thumbs,
+};

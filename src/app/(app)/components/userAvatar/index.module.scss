@@ -1,11 +1,23 @@
 .avatar {
-  height: 60px;
-  width: 60px;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
-  > span {
+
+  &.big {
+    height: 200px;
+    width: 200px;
+    > span {
+      height: 200px;
+      width: 200px;
+    }
+  }
+
+  &.common {
     height: 60px;
     width: 60px;
+    > span {
+      height: 60px;
+      width: 60px;
+    }
   }
 }

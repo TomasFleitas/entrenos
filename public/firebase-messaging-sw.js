@@ -1,7 +1,5 @@
 importScripts(
   'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js',
-);
-importScripts(
   'https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js',
 );
 
@@ -30,27 +28,65 @@ try {
   console.error('Failed to initialize Firebase Messaging', err);
 }
 
+const APP_BASE_URL = `http://entrenos.app`;
+
 if (messaging) {
   try {
-    messaging.onBackgroundMessage((payload) => {
+    messaging.onBackgroundMessage(async (payload) => {
       const notificationTitle = payload.notification.title;
+
+      // Fetch the friend's avatar to use as the notification icon
+      let icon = payload.notification?.image;
+      if (!icon && payload.data.friendId) {
+        try {
+          const response = await fetch(
+            `${APP_BASE_URL}/api/get-friend/${payload.data.friendId}`,
+          );
+          if (response.ok) {
+            const friendData = await response.json();
+            const { avatarStyle, seed } = friendData.friend.avatar || {};
+            icon = `https://api.dicebear.com/8.x/${
+              avatarStyle || 'lorelei'
+            }/svg?seed=${seed}`;
+          }
+        } catch (error) {
+          console.error('Failed to fetch friend avatar', error);
+        }
+      }
 
       const notificationOptions = {
         body: payload.notification.body,
         tag: notificationTitle,
-        icon: payload.notification?.image,
+        icon,
         data: {
           url: payload?.data?.openUrl,
         },
       };
 
-      if (payload?.collapseKey && payload.notification?.image) {
-        self.registration.showNotification(
-          notificationTitle,
-          notificationOptions,
+      self.registration.showNotification(
+        notificationTitle,
+        notificationOptions,
+      );
+    });
+
+    self.addEventListener('notificationclick', (event) => {
+      event.notification.close();
+      const url = event.notification.data.url || APP_BASE_URL;
+      if (url) {
+        event.waitUntil(
+          clients
+            .matchAll({ type: 'window', includeUncontrolled: true })
+            .then((clientList) => {
+              for (const client of clientList) {
+                if (client.url === url && 'focus' in client) {
+                  return client.focus();
+                }
+              }
+              if (clients.openWindow) {
+                return clients.openWindow(url);
+              }
+            }),
         );
-      } else {
-        return new Promise(function (resolve, reject) {});
       }
     });
   } catch (err) {

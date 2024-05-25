@@ -1,0 +1,58 @@
+/* components/CookieConsent.module.css */
+.cookieConsent {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(100%);
+}
+
+.cookieConsent.show {
+  transform: translateY(0);
+}
+
+.cookieConsent p {
+  margin: 0;
+  flex: 1;
+}
+
+.cookieConsent a {
+  color: #25d366;
+  text-decoration: underline;
+}
+
+.cookieConsent .buttonContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.cookieConsent button {
+  background-color: #25d366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.cookieConsent button:hover {
+  background-color: #1da956;
+}
+
+.cookieConsent .cancelButton {
+  background-color: gray;
+}
+
+.cookieConsent .cancelButton:hover {
+  background-color: darkgray;
+}

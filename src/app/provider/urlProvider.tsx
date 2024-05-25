@@ -6,28 +6,33 @@ import {
   useMemo,
   useEffect,
   ReactNode,
+  useState,
 } from 'react';
 
-type TUrl = {};
+type TUrl = {
+  invitedBy?: string;
+};
 
 const UrlContext = createContext<TUrl>({} as TUrl);
 
-export function useUrl() {
+export function useInvite() {
   return useContext(UrlContext);
 }
 
-export function UrlProvider({ children }: { children: ReactNode }) {
+export function InviteProvider({ children }: { children: ReactNode }) {
+  const [invitedBy, setInvitedBy] = useState<string>();
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
-      const invitedBy = urlParams.get('invitedBy');
+      const invitedBy = urlParams.get('friend');
       if (invitedBy) {
         sessionStorage.setItem('invitedBy', invitedBy);
+        setInvitedBy(invitedBy);
       }
     }
   }, []);
 
-  const value = useMemo(() => ({}), []);
+  const value = useMemo(() => ({ invitedBy }), [invitedBy]);
 
   return <UrlContext.Provider value={value}>{children}</UrlContext.Provider>;
 }

@@ -1,0 +1,46 @@
+import { MongoConnection, UsersModel } from '@/app/(app)/mongo';
+import { NextRequest } from 'next/server';
+import { Response } from '../../../utils';
+import { comprimirString, descomprimirString } from '@/app/api/lib';
+import { cookies } from 'next/headers';
+
+export const dynamic = 'force-dynamic';
+
+const mongo = new MongoConnection();
+
+export async function GET(
+  req: NextRequest,
+  context: { params: { friend: string } },
+) {
+  let friendId = context.params.friend;
+
+  if (!friendId) {
+    return Response({ message: 'Friend Not Found' }, 404);
+  }
+
+  friendId = await descomprimirString(friendId);
+
+  await mongo.init();
+
+  const user = await UsersModel.findOne({ uid: friendId });
+
+  if (!user) {
+    return Response({ message: 'Friend Not Found' }, 404);
+  }
+
+  const friend = {
+    name: user?.name || user?.defaultName,
+    avatar: user?.avatar,
+  };
+
+  const resp = cookies().set({
+    name: 'friendId',
+    value: context.params.friend,
+    httpOnly: true,
+    path: '/',
+  });
+
+  console.log('ENTRANDOOOO   =>   ', resp);
+
+  return Response({ friend });
+}

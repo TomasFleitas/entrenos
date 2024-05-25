@@ -1,6 +1,8 @@
+'use client';
+
 import axiosInstance from '@/services';
 import { NEXT_PUBLIC_RECAPTCHA_SITE_KEY } from '@/utils/const';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 export const useRecaptcha = () => {

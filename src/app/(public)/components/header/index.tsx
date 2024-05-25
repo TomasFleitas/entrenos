@@ -1,4 +1,3 @@
-import React from 'react';
 import style from './index.module.scss';
 import Link from 'next/link';
 import { Logo } from '@/app/components/logo';

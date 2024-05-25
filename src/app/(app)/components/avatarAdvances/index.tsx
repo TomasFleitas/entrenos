@@ -8,34 +8,10 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import style from './index.module.scss';
-import {
-  lorelei,
-  adventurer,
-  adventurerNeutral,
-  avataaars,
-  avataaarsNeutral,
-  bigEars,
-  bigEarsNeutral,
-  bigSmile,
-  bottts,
-  botttsNeutral,
-  croodles,
-  croodlesNeutral,
-  funEmoji,
-  icons,
-  identicon,
-  loreleiNeutral,
-  micah,
-  miniavs,
-  openPeeps,
-  personas,
-  pixelArt,
-  pixelArtNeutral,
-  shapes,
-  thumbs,
-} from '@dicebear/collection';
+
 import { createAvatar } from '@dicebear/core';
 import { useAuth } from '@/app/provider/authContext';
+import { avatarCollections } from '@/utils/const';
 
 type Props = {
   open: boolean;
@@ -71,33 +47,6 @@ const avatarOptions = [
   { label: 'Thumbs', value: 'thumbs' },
 ];
 
-export const avatarCollections: { [key: string]: any } = {
-  lorelei,
-  adventurer,
-  adventurerNeutral,
-  avataaars,
-  avataaarsNeutral,
-  bigEars,
-  bigEarsNeutral,
-  bigSmile,
-  bottts,
-  botttsNeutral,
-  croodles,
-  croodlesNeutral,
-  funEmoji,
-  icons,
-  identicon,
-  loreleiNeutral,
-  micah,
-  miniavs,
-  openPeeps,
-  personas,
-  pixelArt,
-  pixelArtNeutral,
-  shapes,
-  thumbs,
-};
-
 export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
   const { user } = useAuth();
   const defautlStyle = user?.avatar?.avatarStyle || 'lorelei';
@@ -115,9 +64,6 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
 
   return (
     <Modal title="Editar Avatar" open={open} onOk={onOk} onCancel={onCancel}>
-      <div className={style.avatar}>
-        <AntAvatar shape="circle" src={uri} />
-      </div>
       <Form.Item name="avatarStyle" label="Estilo">
         <Select
           className={style.select}
@@ -130,6 +76,9 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
           ))}
         </Select>
       </Form.Item>
+      <div className={style.avatar}>
+        <AntAvatar shape="circle" src={uri} />
+      </div>
       <Form.Item
         name="seed"
         label="Clave"

@@ -27,6 +27,7 @@ import {
 } from '@/services/interceptors';
 import { Loading } from '../components/loading';
 import { NEXT_PUBLIC_FIREBASE_PUSH_NOTIFICATION } from '@/utils/const';
+import { useInvite } from './urlProvider';
 
 type TAuthContext = {
   user?: User | null;
@@ -54,6 +55,7 @@ type AuthData =
 
 export function AuthProvider({ children }: CommonReactProps) {
   const [authData, setAuthData] = useState<AuthData>({ init: false });
+  const { invitedBy } = useInvite();
   const [isUpdating, setUpdating] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
@@ -73,7 +75,7 @@ export function AuthProvider({ children }: CommonReactProps) {
         setToken(authToken);
 
         await updateUser({
-          invitedBy: sessionStorage.getItem('invitedBy') ?? undefined,
+          invitedBy: sessionStorage.getItem('invitedBy') ?? invitedBy,
           email: user.email,
           defaultName: user.displayName,
           notificationTokens: {

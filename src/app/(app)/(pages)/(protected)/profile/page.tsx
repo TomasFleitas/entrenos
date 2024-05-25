@@ -50,8 +50,8 @@ export default function ProfilePage() {
         </Item>
         <Divider>MERCADO PAGO</Divider>
         <ConnectMercadoPago />
-        {/* <Divider>INVITAR AMIGOS</Divider>
-        <InviteFriend /> */}
+        <Divider>INVITAR AMIGOS</Divider>
+        <InviteFriend />
         <Divider>NOTIFICACIONES</Divider>
         <NotificationPermission />
       </Form>

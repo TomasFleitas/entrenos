@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!user || !user?.mercadoPago?.access_token) {
-      let users = await getUserToDonate(uid);
+      let users: any[] = await getUserToDonate(uid);
       if (!users.length) {
         users = await getUserToDonate(uid, true);
       }

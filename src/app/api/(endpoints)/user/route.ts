@@ -9,6 +9,8 @@ import {
   COMMON_ALGORITHM_FIRST_PART,
   COMMON_ALGORITHM_SECOND_THIRD,
 } from '../../utils/const';
+import { descomprimirString } from '../../lib';
+import { cookies } from 'next/headers';
 
 const mongo = new MongoConnection();
 
@@ -37,11 +39,19 @@ export async function PUT(req: NextRequest) {
     const user: User & { notificationTokens?: { [x: string]: string | null } } =
       await req.json();
 
+    console.log('COOKIES  >>> ', cookies().get('friendId')?.value);
+
     let invitedBy;
-    if (user.invitedBy) {
-      const exist = await UsersModel.exists({ uid: user.invitedBy });
-      if (exist) {
-        invitedBy = user.invitedBy;
+    let invitedById = user.invitedBy || cookies().get('friendId')?.value;
+    if (invitedById) {
+      invitedById = await descomprimirString(invitedById);
+      if (invitedById !== uid) {
+        const exist = await UsersModel.exists({
+          uid: invitedById,
+        });
+        if (exist) {
+          invitedBy = invitedById;
+        }
       }
     }
 
@@ -73,6 +83,8 @@ export async function PUT(req: NextRequest) {
     );
 
     const updatedUser = await getUserById(uid);
+
+    cookies().delete('friendId');
 
     return Response({ user: updatedUser });
   } catch (error: any) {
