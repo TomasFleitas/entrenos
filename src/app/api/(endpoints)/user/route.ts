@@ -39,8 +39,6 @@ export async function PUT(req: NextRequest) {
     const user: User & { notificationTokens?: { [x: string]: string | null } } =
       await req.json();
 
-    console.log('COOKIES  >>> ', cookies().get('friendId')?.value);
-
     let invitedBy;
     let invitedById = user.invitedBy || cookies().get('friendId')?.value;
     if (invitedById) {
