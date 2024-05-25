@@ -3,8 +3,10 @@ import { useState } from 'react';
 import style from './index.module.scss';
 import { WhatsAppOutlined } from '@ant-design/icons';
 import axiosInstance from '@/services';
+import { useAuth } from '@/app/provider/authContext';
 
 export const InviteFriend = () => {
+  const { user } = useAuth();
   const [getting, setGetting] = useState(false);
   const [whatsapp, sentWhatsapp] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -41,6 +43,11 @@ export const InviteFriend = () => {
 
   return (
     <div className={style.invite}>
+      {user?.inviter && (
+        <p className={style.invited}>
+          Invitado por: <b>{user.inviter?.name}</b>
+        </p>
+      )}
       <div className={style.buttons}>
         <Button
           loading={getting}
@@ -58,7 +65,10 @@ export const InviteFriend = () => {
           icon={<WhatsAppOutlined />}
         />
       </div>
-      {linkCopied && <p>Pega el link donde tu quieras!</p>}
+
+      {linkCopied && (
+        <p className={style.link}>Pega el link donde tu quieras!</p>
+      )}
     </div>
   );
 };

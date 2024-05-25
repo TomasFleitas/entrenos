@@ -17,13 +17,13 @@ export async function GET(
   if (!friendId) {
     return Response({ message: 'Friend Not Found' }, 404);
   }
-  
+
   try {
     friendId = await descomprimirString(friendId);
-  } catch(e:any){
+  } catch (e: any) {
     return Response({ message: 'Friend Not Found' }, 404);
   }
-  
+
   await mongo.init();
 
   const user = await UsersModel.findOne({ uid: friendId });
@@ -37,7 +37,7 @@ export async function GET(
     avatar: user?.avatar,
   };
 
-  const resp = cookies().set({
+  cookies().set({
     name: 'friendId',
     value: context.params.friend,
     httpOnly: true,

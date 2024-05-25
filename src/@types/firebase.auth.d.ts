@@ -1,4 +1,9 @@
 import 'firebase/auth';
+
+type Avatar = {
+  seed?: string;
+  avatarStyle?: string;
+};
 declare module 'firebase/auth' {
   export interface User {
     mercadoPago?: {
@@ -12,11 +17,12 @@ declare module 'firebase/auth' {
     invitedBy?: string;
     hasDonatedToFriend?: boolean;
     mpConnected: boolean;
-    mercadoPagoAccount?: MercadoPagoAccountDetail;
-    avatar?: {
-      seed?: string;
-      avatarStyle?: string;
+    inviter?: {
+      name: string;
+      avatar: Avatar;
     };
+    mercadoPagoAccount?: MercadoPagoAccountDetail;
+    avatar?: Avatar;
     uid: string;
     createdAt: string;
     email: string;

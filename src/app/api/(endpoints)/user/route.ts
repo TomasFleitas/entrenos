@@ -55,6 +55,18 @@ export async function PUT(req: NextRequest) {
 
     const oldUser = await UsersModel.findOne({ uid });
 
+    const noties = Object.fromEntries(oldUser?.notificationTokens || new Map());
+
+    const oldNotificationTokens = Object.keys(noties)
+      .filter((key) => !!noties[key])
+      .reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: noties[key],
+        }),
+        {},
+      );
+
     await UsersModel.updateOne(
       { uid },
       {
@@ -67,7 +79,7 @@ export async function PUT(req: NextRequest) {
           ...user.avatar,
         },
         notificationTokens: {
-          ...Object.fromEntries(oldUser?.notificationTokens || new Map()),
+          ...oldNotificationTokens,
           ...user.notificationTokens,
         },
         name: user.name,
@@ -92,6 +104,48 @@ export async function PUT(req: NextRequest) {
 }
 
 const getUserById = async (uid: string) => {
+  console.log(
+    JSON.stringify([
+      {
+        $match: {
+          uid,
+        },
+      },
+      ...COMMON_ALGORITHM_FIRST_PART(DonationsModel.collection.name),
+      ...COMMON_ALGORITHM_SECOND_PART({
+        email: { $first: '$email' },
+        name: { $first: '$name' },
+        defaultName: { $first: '$defaultName' },
+        birthday: { $first: '$birthday' },
+        updatedAt: { $first: '$updatedAt' },
+        createdAt: { $first: '$createdAt' },
+        avatar: { $first: '$avatar' },
+        donations: {
+          $push: {
+            amount: '$donations.amount',
+            timestamp: '$donations.timestamp',
+          },
+        },
+      }),
+      ...COMMON_ALGORITHM_SECOND_THIRD(false),
+      {
+        $project: {
+          _id: 0,
+          uid: 1,
+          email: 1,
+          name: 1,
+          updatedAt: 1,
+          mercadoPago: 1,
+          birthday: 1,
+          defaultName: 1,
+          createdAt: 1,
+          donations: 1,
+          avatar: 1,
+          score: 1,
+        },
+      },
+    ]),
+  );
   const users = await UsersModel.aggregate([
     {
       $match: {
@@ -107,6 +161,7 @@ const getUserById = async (uid: string) => {
       updatedAt: { $first: '$updatedAt' },
       createdAt: { $first: '$createdAt' },
       avatar: { $first: '$avatar' },
+      invitedBy: { $first: '$invitedBy' },
       donations: {
         $push: {
           amount: '$donations.amount',
@@ -115,6 +170,20 @@ const getUserById = async (uid: string) => {
       },
     }),
     ...COMMON_ALGORITHM_SECOND_THIRD(false),
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'invitedBy',
+        foreignField: 'uid',
+        as: 'inviter',
+      },
+    },
+    {
+      $unwind: {
+        path: '$inviter',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
     {
       $project: {
         _id: 0,
@@ -129,13 +198,26 @@ const getUserById = async (uid: string) => {
         donations: 1,
         avatar: 1,
         score: 1,
+        inviter: {
+          name: '$inviter.name',
+          defaultName: '$inviter.defaultName',
+          avatar: '$inviter.avatar',
+        },
       },
     },
   ]);
 
+  const inviter = users[0]?.inviter;
+
   const user = {
     ...users[0],
     isFirstDonation: !users[0]?.donations?.length,
+    ...(inviter && {
+      inviter: {
+        name: inviter.name || inviter.defaultName,
+        avatar: inviter.avatar,
+      },
+    }),
   };
 
   const userAccessToken = user?.mercadoPago?.access_token;

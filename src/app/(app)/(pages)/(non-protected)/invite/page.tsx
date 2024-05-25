@@ -27,16 +27,23 @@ export async function generateMetadata(
     };
   }
 
-  const friendData = await fetch(
-    `${APP_BASE_URL}/api/get-friend/${friendId}`,
-  ).then((res) => res.json()).catch(() => {
+  const friendData = await fetch(`${APP_BASE_URL}/api/get-friend/${friendId}`)
+    .then((res) => res.json())
+    .catch(() => {
+      return {
+        title: 'EntreNos',
+        description: '',
+      };
+    });
+
+  const friend = friendData.friend;
+
+  if (!friend) {
     return {
       title: 'EntreNos',
       description: '',
     };
-  })
-
-  const friend = friendData.friend;
+  }
 
   const previousImages = (await parent).openGraph?.images || [];
 
