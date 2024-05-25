@@ -17,9 +17,13 @@ export async function GET(
   if (!friendId) {
     return Response({ message: 'Friend Not Found' }, 404);
   }
-
-  friendId = await descomprimirString(friendId);
-
+  
+  try {
+    friendId = await descomprimirString(friendId);
+  } catch(e:any){
+    return Response({ message: 'Friend Not Found' }, 404);
+  }
+  
   await mongo.init();
 
   const user = await UsersModel.findOne({ uid: friendId });
