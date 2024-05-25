@@ -14,9 +14,10 @@ type Props = {
 };
 
 // Metadata function to dynamically set the page metadata
-export async function generateMetadata({
-  searchParams,
-}: Props): Promise<Metadata> {
+export async function generateMetadata(
+  { searchParams }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const friendId = searchParams?.friend as string;
 
   if (!friendId) {
@@ -32,6 +33,8 @@ export async function generateMetadata({
 
   const friend = friendData.friend;
 
+  const previousImages = (await parent).openGraph?.images || [];
+
   const { avatarStyle, ...rest } = friend.avatar || {};
 
   const avatarUri = createAvatar(
@@ -43,7 +46,7 @@ export async function generateMetadata({
     title: `Invitación de ${friend.name}`,
     description: `${friend.name} te invita a unirte a nuestra comunidad. ¡Únete ahora y descubre todo lo que tenemos para ofrecer!`,
     openGraph: {
-      images: [avatarUri],
+      images: [avatarUri, ...previousImages],
     },
     icons: {
       icon: avatarUri,
@@ -51,9 +54,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function InvitePage({
-  searchParams: { friend = null } = {},
-} = {}) {
+export default async function InvitePage({ searchParams }: any) {
+  const friend = searchParams?.friend;
+
   if (!friend) {
     redirect('/');
   }
