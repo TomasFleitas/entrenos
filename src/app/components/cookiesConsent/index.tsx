@@ -30,7 +30,7 @@ export const CookieConsent = () => {
       <p>
         Usamos cookies para mejorar tu experiencia en nuestro sitio. Al aceptar,
         aceptas nuestra{' '}
-        <a href="/privacy-policy" className={styles.link}>
+        <a href="#" className={styles.link}>
           política de cookies
         </a>
         .
