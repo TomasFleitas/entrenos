@@ -104,48 +104,6 @@ export async function PUT(req: NextRequest) {
 }
 
 const getUserById = async (uid: string) => {
-  console.log(
-    JSON.stringify([
-      {
-        $match: {
-          uid,
-        },
-      },
-      ...COMMON_ALGORITHM_FIRST_PART(DonationsModel.collection.name),
-      ...COMMON_ALGORITHM_SECOND_PART({
-        email: { $first: '$email' },
-        name: { $first: '$name' },
-        defaultName: { $first: '$defaultName' },
-        birthday: { $first: '$birthday' },
-        updatedAt: { $first: '$updatedAt' },
-        createdAt: { $first: '$createdAt' },
-        avatar: { $first: '$avatar' },
-        donations: {
-          $push: {
-            amount: '$donations.amount',
-            timestamp: '$donations.timestamp',
-          },
-        },
-      }),
-      ...COMMON_ALGORITHM_SECOND_THIRD(false),
-      {
-        $project: {
-          _id: 0,
-          uid: 1,
-          email: 1,
-          name: 1,
-          updatedAt: 1,
-          mercadoPago: 1,
-          birthday: 1,
-          defaultName: 1,
-          createdAt: 1,
-          donations: 1,
-          avatar: 1,
-          score: 1,
-        },
-      },
-    ]),
-  );
   const users = await UsersModel.aggregate([
     {
       $match: {
