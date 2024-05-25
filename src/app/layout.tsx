@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'EntreNos',
+  icons: null,
   description:
     'EntreNos es una aplicación diseñada para conectar personas de toda la nación, facilitando la ayuda mutua mediante el envío y recepción de dinero de manera aleatoria y segura.',
 };

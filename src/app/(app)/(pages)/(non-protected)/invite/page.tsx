@@ -46,7 +46,7 @@ export async function generateMetadata(
     title: `Invitación de ${friend.name}`,
     description: `${friend.name} te invita a unirte a nuestra comunidad. ¡Únete ahora y descubre todo lo que tenemos para ofrecer!`,
     openGraph: {
-      images: [avatarUri || '/default-avatar.svg', ...previousImages],
+      images: [avatarUri, ...previousImages],
     },
     icons: {
       icon: avatarUri,
