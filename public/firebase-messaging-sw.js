@@ -28,7 +28,7 @@ try {
   console.error('Failed to initialize Firebase Messaging', err);
 }
 
-const APP_BASE_URL = `http://entrenos.app`;
+const APP_BASE_URL = `https://entrenos.app`;
 
 if (messaging) {
   try {
@@ -44,7 +44,7 @@ if (messaging) {
           );
           if (response.ok) {
             const friendData = await response.json();
-            const { avatarStyle, seed } = friendData.friend.avatar || {};
+            const { avatarStyle, seed } = friendData?.friend?.avatar || {};
             icon = `https://api.dicebear.com/8.x/${
               avatarStyle || 'lorelei'
             }/svg?seed=${seed}`;
