@@ -3,8 +3,9 @@ import { Avatar, Form, FormInstance, Input } from 'antd';
 import style from './index.module.scss';
 import { EditOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
-import { AvatarAdvances, avatarCollections } from '../avatarAdvances';
+import { AvatarAdvances } from '../avatarAdvances';
 import { useAuth } from '@/app/provider/authContext';
+import { avatarCollections } from '@/utils/const';
 
 const { Item } = Form;
 

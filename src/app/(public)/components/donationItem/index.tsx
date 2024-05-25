@@ -16,14 +16,15 @@ export const DonationItem = ({ donation }: Props) => {
       }`}
     >
       <div>
-        <UserAvatar {...donation.donor.avatar} />
+        <UserAvatar {...donation.donor.avatar} direction="right" />
         {donation.donor.name}
       </div>
       <div>
         <MoneyIcon /> <p className={style.money}>{donation.amount}</p>
       </div>
       <div>
-        {donation.recipient.name} <UserAvatar {...donation.recipient.avatar} />
+        {donation.recipient.name}{' '}
+        <UserAvatar {...donation.recipient.avatar} direction="left" />
       </div>
     </div>
   );
