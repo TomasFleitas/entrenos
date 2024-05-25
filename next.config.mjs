@@ -3,7 +3,7 @@ import config from 'next-pwa';
 
 const withPWA = config({
   dest: 'public',
-  disable: true,
+  disable: false,
 });
 
 export default withPWA();
