@@ -43,7 +43,7 @@ export const InviteFriend = () => {
 
   return (
     <div className={style.invite}>
-      {user?.inviter && (
+      {user?.inviter?.name && (
         <p className={style.invited}>
           Invitado por: <b>{user.inviter?.name}</b>
         </p>

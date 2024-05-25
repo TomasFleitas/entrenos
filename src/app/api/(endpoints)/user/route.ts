@@ -209,6 +209,8 @@ const getUserById = async (uid: string) => {
 
   const inviter = users[0]?.inviter;
 
+  delete users[0]?.inviter;
+
   const user = {
     ...users[0],
     isFirstDonation: !users[0]?.donations?.length,
