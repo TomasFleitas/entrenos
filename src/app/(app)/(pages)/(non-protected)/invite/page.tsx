@@ -29,13 +29,18 @@ export async function generateMetadata(
 
   const friendData = await fetch(
     `${APP_BASE_URL}/api/get-friend/${friendId}`,
-  ).then((res) => res.json());
+  ).then((res) => res.json()).catch(() => {
+    return {
+      title: 'EntreNos',
+      description: '',
+    };
+  })
 
   const friend = friendData.friend;
 
   const previousImages = (await parent).openGraph?.images || [];
 
-  const { avatarStyle, ...rest } = friend.avatar || {};
+  const { avatarStyle, ...rest } = friend?.avatar || {};
 
   const avatarUri = createAvatar(
     avatarCollections?.[avatarStyle || 'lorelei'],
