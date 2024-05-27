@@ -66,6 +66,7 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
     <Modal title="Editar Avatar" open={open} onOk={onOk} onCancel={onCancel}>
       <Form.Item name="avatarStyle" label="Estilo">
         <Select
+          disabled
           className={style.select}
           onChange={(value) => setAvatarStyle(value)}
         >
