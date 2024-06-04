@@ -8,6 +8,7 @@ import {
   COMMON_ALGORITHM_SECOND_PART,
   COMMON_ALGORITHM_FIRST_PART,
   COMMON_ALGORITHM_SECOND_THIRD,
+  avatarOptions,
 } from '../../utils/const';
 import { descomprimirString } from '../../lib';
 import { cookies } from 'next/headers';
@@ -67,6 +68,24 @@ export async function PUT(req: NextRequest) {
         {},
       );
 
+    let cost = 0;
+    if (
+      (user.avatar?.avatarStyle &&
+        user.avatar?.avatarStyle !== oldUser?.avatar?.avatarStyle) ||
+      (user.avatar?.seed && user.avatar?.seed !== oldUser?.avatar?.seed)
+    ) {
+      cost =
+        avatarOptions.find(
+          ({ value }) =>
+            value ===
+            (user.avatar?.avatarStyle || oldUser?.avatar?.avatarStyle),
+        )?.cost || 0;
+    }
+
+    if (cost > (oldUser?.coins ?? 0)) {
+      return Response({ message: 'Insufficient coins' }, 400);
+    }
+
     await UsersModel.updateOne(
       { uid },
       {
@@ -82,6 +101,7 @@ export async function PUT(req: NextRequest) {
           ...oldNotificationTokens,
           ...user.notificationTokens,
         },
+        ...(cost > 0 && { $inc: { coins: -cost } }),
         name: user.name,
         birthday: user.birthday,
         updatedAt: new Date(),
@@ -120,6 +140,7 @@ const getUserById = async (uid: string) => {
       createdAt: { $first: '$createdAt' },
       avatar: { $first: '$avatar' },
       invitedBy: { $first: '$invitedBy' },
+      coins: { $first: '$coins' },
       donations: {
         $push: {
           amount: '$donations.amount',
@@ -154,6 +175,7 @@ const getUserById = async (uid: string) => {
         defaultName: 1,
         createdAt: 1,
         donations: 1,
+        coins: 1,
         avatar: 1,
         score: 1,
         inviter: {
@@ -171,8 +193,9 @@ const getUserById = async (uid: string) => {
 
   const user = {
     ...users[0],
+    coins: users?.[0]?.coins ?? 0,
     isFirstDonation: !users[0]?.donations?.length,
-    ...(inviter && {
+    ...(Object.keys(inviter || {}).length && {
       inviter: {
         name: inviter.name || inviter.defaultName,
         avatar: inviter.avatar,

@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { LoginButton } from '../../../components/loginButton';
 import style from './index.module.scss';
-import { APP_BASE_URL } from '@/app/api/utils/const';
+import { APP_BASE_URL, getCheapest } from '@/app/api/utils/const';
 import { UserAvatar } from '@/app/(app)/components/userAvatar';
 import { User } from 'firebase/auth';
 import { createAvatar } from '@dicebear/core';
@@ -50,7 +50,7 @@ export async function generateMetadata(
   const { avatarStyle, ...rest } = friend?.avatar || {};
 
   const avatarUri = createAvatar(
-    avatarCollections?.[avatarStyle || 'lorelei'],
+    avatarCollections?.[avatarStyle || getCheapest()?.value],
     rest,
   ).toDataUriSync();
 

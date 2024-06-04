@@ -128,3 +128,48 @@ export const COMMON_ALGORITHM_SECOND_THIRD = (isRandom = true) => [
     },
   },
 ];
+
+export const getCheapest = () => {
+  if (!avatarOptions || avatarOptions.length === 0) return null;
+
+  let cheapestAvatar = avatarOptions[0];
+
+  for (let i = 1; i < avatarOptions.length; i++) {
+    if (avatarOptions[i].cost < cheapestAvatar.cost) {
+      cheapestAvatar = avatarOptions[i];
+    }
+  }
+
+  return cheapestAvatar;
+};
+
+export const getStyleCost = (style: string) => {
+  return avatarOptions?.find(({ value }) => value === style)?.cost || 0;
+};
+
+export const avatarOptions = [
+  { label: 'Avataaars', value: 'avataaars', cost: 30 },
+  { label: 'Lorelei', value: 'lorelei', cost: 20 },
+  { label: 'Big Ears', value: 'bigEars', cost: 15 },
+  { label: 'Big Smile', value: 'bigSmile', cost: 30 },
+  { label: 'Bottts', value: 'bottts', cost: 40 },
+  { label: 'Croodles', value: 'croodles', cost: 40 },
+  { label: 'Fun Emoji', value: 'funEmoji', cost: 40 },
+  { label: 'Icons', value: 'icons', cost: 15 },
+  { label: 'Identicon', value: 'identicon', cost: 15 },
+  { label: 'Micah', value: 'micah', cost: 40 },
+  { label: 'Adventurer', value: 'adventurer', cost: 50 },
+  { label: 'Miniavs', value: 'miniavs', cost: 30 },
+  { label: 'Open Peeps', value: 'openPeeps', cost: 40 },
+  { label: 'Personas', value: 'personas', cost: 30 },
+  { label: 'Pixel Art', value: 'pixelArt', cost: 10 },
+  { label: 'Shapes', value: 'shapes', cost: 10 },
+  { label: 'Thumbs', value: 'thumbs', cost: 10 },
+  { label: 'Adventurer Neutral', value: 'adventurerNeutral', cost: 5 },
+  { label: 'Avataaars Neutral', value: 'avataaarsNeutral', cost: 5 },
+  { label: 'Big Ears Neutral', value: 'bigEarsNeutral', cost: 5 },
+  { label: 'Bottts Neutral', value: 'botttsNeutral', cost: 5 },
+  { label: 'Pixel Art Neutral', value: 'pixelArtNeutral', cost: 5 },
+  { label: 'Croodles Neutral', value: 'croodlesNeutral', cost: 10 },
+  { label: 'Lorelei Neutral', value: 'loreleiNeutral', cost: 10 },
+];

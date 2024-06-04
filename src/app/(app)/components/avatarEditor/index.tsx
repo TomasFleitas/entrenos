@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import { AvatarAdvances } from '../avatarAdvances';
 import { useAuth } from '@/app/provider/authContext';
 import { avatarCollections } from '@/utils/const';
+import { getCheapest, getStyleCost } from '@/app/api/utils/const';
 
 const { Item } = Form;
 
@@ -21,7 +22,7 @@ export const AvatarEditor = ({ form }: Props) => {
 
   const uri = createAvatar(
     avatarCollections?.[
-      avatarStyle || form.getFieldValue('avatarStyle') || 'lorelei'
+      avatarStyle || form.getFieldValue('avatarStyle') || getCheapest()?.value
     ],
     {
       seed,
@@ -57,6 +58,10 @@ export const AvatarEditor = ({ form }: Props) => {
         <Input
           maxLength={80}
           showCount
+          disabled={
+            getStyleCost(avatarStyle || user?.avatar?.avatarStyle) >
+            (user?.coins ?? 0)
+          }
           addonAfter={<EditOutlined onClick={setOpenEdit} />}
         />
       </Item>

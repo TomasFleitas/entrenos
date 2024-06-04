@@ -4,6 +4,7 @@ import style from './index.module.scss';
 import { WhatsAppOutlined } from '@ant-design/icons';
 import axiosInstance from '@/services';
 import { useAuth } from '@/app/provider/authContext';
+import { CopyIcon } from '../icons';
 
 export const InviteFriend = () => {
   const { user } = useAuth();
@@ -53,10 +54,9 @@ export const InviteFriend = () => {
           loading={getting}
           type="default"
           shape="round"
+          icon={<CopyIcon fill='#00000'/>}
           onClick={handleCopyLink}
-        >
-          {linkCopied ? 'Link copiado!' : 'Copiar Link!'}
-        </Button>
+        />
         <Button
           onClick={sendWhatsapp}
           loading={whatsapp}

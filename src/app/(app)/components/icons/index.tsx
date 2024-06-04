@@ -1,6 +1,54 @@
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import Icon from '@ant-design/icons';
 
+export const CopyIcon = (props: Partial<CustomIconComponentProps>) => (
+  <Icon
+    component={() => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={props?.width ?? '20px'}
+        height={props?.height ?? '20px'}
+        viewBox="0 -960 960 960"
+        fill={props?.fill ?? '#e8eaed'}
+      >
+        <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z" />
+      </svg>
+    )}
+  />
+);
+
+export const MoneyCircleIcon = (props: Partial<CustomIconComponentProps>) => (
+  <Icon
+    component={() => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={props?.width ?? '24px'}
+        height={props?.height ?? '24px'}
+        viewBox="0 -960 960 960"
+        fill={props?.fill ?? '#e8eaed'}
+      >
+        <path d="M444-200h70v-50q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q32 0 50 15.5t26 38.5l64-26q-11-35-40.5-61T516-710v-50h-70v50q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-33 0-58.5-20.5T390-396l-66 26q14 48 43.5 77.5T444-252v52Zm36 120q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
+      </svg>
+    )}
+  />
+);
+
+export const HelpEnchangeIcon = (props: Partial<CustomIconComponentProps>) => (
+  <Icon
+    component={() => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={props?.width ?? '22px'}
+        height={props?.height ?? '22px'}
+        viewBox="0 -960 960 960"
+        style={{ fill: 'black' }}
+      >
+        <path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Zm440 240q21 0 35.5-14.5T530-290q0-21-14.5-36T480-341q-21 0-35.5 14.5T430-291q0 21 14.5 36t35.5 15Zm-36-152h73q0-36 8.5-54t34.5-44q35-35 46.5-56.5T618-598q0-56-40-89t-98-33q-50 0-86 26t-52 74l66 28q7-26 26.5-43t45.5-17q27 0 45.5 15.5T544-595q0 17-8 34t-34 40q-33 29-45.5 56.5T444-392Z" />
+      </svg>
+    )}
+  />
+);
+
 export const HelpIcon = (props: Partial<CustomIconComponentProps>) => (
   <Icon
     component={() => (
@@ -9,6 +57,7 @@ export const HelpIcon = (props: Partial<CustomIconComponentProps>) => (
         width={props?.width ?? '24px'}
         height={props?.height ?? '24px'}
         viewBox="0 -960 960 960"
+        fill="#e8eaed"
       >
         <path d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z" />
       </svg>

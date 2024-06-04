@@ -45,9 +45,9 @@ if (messaging) {
           if (response.ok) {
             const friendData = await response.json();
             const { avatarStyle, seed } = friendData?.friend?.avatar || {};
-            icon = `https://api.dicebear.com/8.x/${
-              avatarStyle || 'lorelei'
-            }/svg?seed=${seed}`;
+            if (avatarStyle) {
+              icon = `https://api.dicebear.com/8.x/${avatarStyle}/svg?seed=${seed}`;
+            }
           }
         } catch (error) {
           console.error('Failed to fetch friend avatar', error);

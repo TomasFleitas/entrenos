@@ -28,6 +28,7 @@ declare module 'firebase/auth' {
     email: string;
     defaultName?: string | null;
     birthday?: Date;
+    coins?: number;
     name: string;
     score: number;
     donations: {

@@ -12,6 +12,12 @@ import style from './index.module.scss';
 import { createAvatar } from '@dicebear/core';
 import { useAuth } from '@/app/provider/authContext';
 import { avatarCollections } from '@/utils/const';
+import {
+  avatarOptions,
+  getCheapest,
+  getStyleCost,
+} from '@/app/api/utils/const';
+import { MoneyCircleIcon } from '../icons';
 
 type Props = {
   open: boolean;
@@ -20,36 +26,9 @@ type Props = {
   onOk: () => void;
 };
 
-const avatarOptions = [
-  { label: 'Lorelei', value: 'lorelei' },
-  { label: 'Adventurer', value: 'adventurer' },
-  { label: 'Adventurer Neutral', value: 'adventurerNeutral' },
-  { label: 'Avataaars', value: 'avataaars' },
-  { label: 'Avataaars Neutral', value: 'avataaarsNeutral' },
-  { label: 'Big Ears', value: 'bigEars' },
-  { label: 'Big Ears Neutral', value: 'bigEarsNeutral' },
-  { label: 'Big Smile', value: 'bigSmile' },
-  { label: 'Bottts', value: 'bottts' },
-  { label: 'Bottts Neutral', value: 'botttsNeutral' },
-  { label: 'Croodles', value: 'croodles' },
-  { label: 'Croodles Neutral', value: 'croodlesNeutral' },
-  { label: 'Fun Emoji', value: 'funEmoji' },
-  { label: 'Icons', value: 'icons' },
-  { label: 'Identicon', value: 'identicon' },
-  { label: 'Lorelei Neutral', value: 'loreleiNeutral' },
-  { label: 'Micah', value: 'micah' },
-  { label: 'Miniavs', value: 'miniavs' },
-  { label: 'Open Peeps', value: 'openPeeps' },
-  { label: 'Personas', value: 'personas' },
-  { label: 'Pixel Art', value: 'pixelArt' },
-  { label: 'Pixel Art Neutral', value: 'pixelArtNeutral' },
-  { label: 'Shapes', value: 'shapes' },
-  { label: 'Thumbs', value: 'thumbs' },
-];
-
 export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
   const { user } = useAuth();
-  const defautlStyle = user?.avatar?.avatarStyle || 'lorelei';
+  const defautlStyle = user?.avatar?.avatarStyle || getCheapest()?.value!;
   const [avatarStyle, setAvatarStyle] = useState(defautlStyle);
   const seed = Form.useWatch('seed', form);
 
@@ -63,18 +42,31 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
   }, [avatarStyle, form, open]);
 
   return (
-    <Modal title="Editar Avatar" open={open} onOk={onOk} onCancel={onCancel}>
+    <Modal
+      title={<div className={style.title}>Editar Avatar</div>}
+      open={open}
+      onOk={onOk}
+      onCancel={onCancel}
+    >
       <Form.Item name="avatarStyle" label="Estilo">
-        <Select
-          disabled
-          className={style.select}
-          onChange={(value) => setAvatarStyle(value)}
-        >
-          {avatarOptions.map((option) => (
-            <Select.Option key={option.value} value={option.value}>
-              {option.label}
-            </Select.Option>
-          ))}
+        <Select onChange={(value) => setAvatarStyle(value)}>
+          {avatarOptions
+            .sort((a, b) => a.cost - b.cost)
+            .map((option) => (
+              <Select.Option
+                disabled={option.cost > (user?.coins ?? 0)}
+                key={option.value}
+                value={option.value}
+              >
+                <div className={style.option}>
+                  <div>
+                    <MoneyCircleIcon fill="green" width={18} height={18} />
+                    <b>{option.cost}</b>
+                  </div>
+                  {option.label}
+                </div>
+              </Select.Option>
+            ))}
         </Select>
       </Form.Item>
       <div className={style.avatar}>
@@ -85,7 +77,11 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
         label="Clave"
         help="La clave genera un valor único para tu avatar."
       >
-        <Input maxLength={80} showCount />
+        <Input
+          disabled={getStyleCost(avatarStyle) > (user?.coins ?? 0)}
+          maxLength={80}
+          showCount
+        />
       </Form.Item>
     </Modal>
   );
