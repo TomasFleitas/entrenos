@@ -141,6 +141,7 @@ const getUserById = async (uid: string) => {
       createdAt: { $first: '$createdAt' },
       avatar: { $first: '$avatar' },
       invitedBy: { $first: '$invitedBy' },
+      backgroundColor: { $first: '$backgroundColor' },
       coins: { $first: '$coins' },
       donations: {
         $push: {
@@ -172,6 +173,7 @@ const getUserById = async (uid: string) => {
         name: 1,
         updatedAt: 1,
         mercadoPago: 1,
+        backgroundColor: 1,
         birthday: 1,
         defaultName: 1,
         createdAt: 1,

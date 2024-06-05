@@ -4,7 +4,6 @@ import { createAvatar } from '@dicebear/core';
 import { Avatar } from 'antd';
 import style from './index.module.scss';
 import { avatarCollections } from '@/utils/const';
-import { getCheapest } from '@/app/api/utils/const';
 import { getInitials } from '@/utils';
 
 type Props = {

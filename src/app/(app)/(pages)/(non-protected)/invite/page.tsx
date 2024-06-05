@@ -108,6 +108,7 @@ export default async function InvitePage({ searchParams }: any) {
     <div className={style.invite}>
       <UserAvatar
         {...userFriend.avatar}
+        backgroundColor={userFriend.backgroundColor}
         name={userFriend.name || userFriend.defaultName}
         type="big"
       />

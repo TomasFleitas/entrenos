@@ -4,7 +4,6 @@ import { EditOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { AvatarAdvances } from '../avatarAdvances';
 import { useAuth } from '@/app/provider/authContext';
-
 import { getStyleCost } from '@/app/api/utils/const';
 import { UserAvatar } from '../userAvatar';
 
@@ -41,6 +40,7 @@ export const AvatarEditor = ({ form }: Props) => {
       <div className={style.center}>
         <UserAvatar
           type="profile"
+          backgroundColor={user?.backgroundColor}
           avatarStyle={innerAvatarStyle}
           name={user?.name || user?.defaultName}
           seed={seed}
