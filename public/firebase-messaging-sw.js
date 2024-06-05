@@ -45,7 +45,7 @@ if (messaging) {
           if (response.ok) {
             const friendData = await response.json();
             const { avatarStyle, seed } = friendData?.friend?.avatar || {};
-            if (avatarStyle) {
+            if (avatarStyle && avatarStyle !== 'default') {
               icon = `https://api.dicebear.com/8.x/${avatarStyle}/svg?seed=${seed}`;
             }
           }
