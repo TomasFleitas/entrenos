@@ -15,6 +15,7 @@ declare module 'firebase/auth' {
     };
     isFirstDonation: boolean;
     invitedBy?: string;
+    backgroundColor?: string;
     hasDonatedToFriend?: boolean;
     mpConnected: boolean;
     inviter?: {

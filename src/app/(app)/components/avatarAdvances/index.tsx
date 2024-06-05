@@ -1,23 +1,10 @@
-import {
-  Form,
-  FormInstance,
-  Modal,
-  Select,
-  Input,
-  Avatar as AntAvatar,
-} from 'antd';
+import { Form, FormInstance, Modal, Select, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import style from './index.module.scss';
-
-import { createAvatar } from '@dicebear/core';
 import { useAuth } from '@/app/provider/authContext';
-import { avatarCollections } from '@/utils/const';
-import {
-  avatarOptions,
-  getCheapest,
-  getStyleCost,
-} from '@/app/api/utils/const';
+import { avatarOptions, getStyleCost } from '@/app/api/utils/const';
 import { MoneyCircleIcon } from '../icons';
+import { UserAvatar } from '../userAvatar';
 
 type Props = {
   open: boolean;
@@ -28,13 +15,9 @@ type Props = {
 
 export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
   const { user } = useAuth();
-  const defautlStyle = user?.avatar?.avatarStyle || getCheapest()?.value!;
+  const defautlStyle = user?.avatar?.avatarStyle;
   const [avatarStyle, setAvatarStyle] = useState(defautlStyle);
   const seed = Form.useWatch('seed', form);
-
-  const uri = createAvatar(avatarCollections?.[avatarStyle], {
-    seed,
-  }).toDataUriSync();
 
   useEffect(() => {
     open && form.setFieldsValue({ avatarStyle });
@@ -59,18 +42,25 @@ export const AvatarAdvances = ({ open, form, onCancel, onOk }: Props) => {
                 value={option.value}
               >
                 <div className={style.option}>
-                  <div>
-                    <MoneyCircleIcon fill="green" width={18} height={18} />
-                    <b>{option.cost}</b>
-                  </div>
+                  {!!option.cost && (
+                    <div>
+                      <MoneyCircleIcon fill="green" width={18} height={18} />
+                      <b>{option.cost}</b>
+                    </div>
+                  )}
                   {option.label}
                 </div>
               </Select.Option>
             ))}
         </Select>
       </Form.Item>
-      <div className={style.avatar}>
-        <AntAvatar shape="circle" src={uri} />
+      <div className={style.center}>
+        <UserAvatar
+          type="profile"
+          avatarStyle={avatarStyle}
+          name={user?.name || user?.defaultName}
+          seed={seed}
+        />
       </div>
       <Form.Item
         name="seed"

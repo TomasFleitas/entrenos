@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     seed: String,
     avatarStyle: String,
   },
+  backgroundColor: { type: String, trim: true },
   coins: { type: Number, default: 0 },
   invitedBy: { type: String, trim: true, default: null },
   hasDonatedToFriend: { type: Boolean, default: false },

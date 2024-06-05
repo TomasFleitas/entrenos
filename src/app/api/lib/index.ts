@@ -8,6 +8,7 @@ import {
   getAfterThan,
   oneHourAgo,
 } from '../utils/const';
+import crypto from 'crypto';
 
 export const comprimirString = async (inputString: string): Promise<string> => {
   const buffer = Buffer.from(inputString, 'utf-8');
@@ -90,3 +91,25 @@ export const getUserToDonate = async (uid: string, exludeAlreadySent = false) =>
     },
     { $limit: DONATE_SLOTS },
   ]);
+
+export function generateRandomColor() {
+  let color;
+  do {
+    const randomBytes = crypto.randomBytes(3);
+    color = `#${randomBytes.toString('hex')}`;
+  } while (isLightColor(color));
+  return color;
+}
+
+function isLightColor(color: string) {
+  // Extract RGB values from the hex color
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+
+  // Calculate brightness using the luminance formula
+  const brightness = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Return true if the brightness is higher than a certain threshold (e.g., 0.7)
+  return brightness > 0.7;
+}

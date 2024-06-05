@@ -143,11 +143,13 @@ export const getCheapest = () => {
   return cheapestAvatar;
 };
 
-export const getStyleCost = (style: string) => {
+export const getStyleCost = (style?: string) => {
+  if (!style) return 0;
   return avatarOptions?.find(({ value }) => value === style)?.cost || 0;
 };
 
 export const avatarOptions = [
+  { label: 'Por defecto', value: 'default', cost: 0 },
   { label: 'Avataaars', value: 'avataaars', cost: 30 },
   { label: 'Lorelei', value: 'lorelei', cost: 20 },
   { label: 'Big Ears', value: 'bigEars', cost: 15 },

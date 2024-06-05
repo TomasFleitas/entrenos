@@ -23,7 +23,7 @@ export default function ProfilePage() {
           name: user?.name || user?.defaultName,
           birthday: user?.birthday && dayjs(user?.birthday),
           seed: user?.avatar?.seed,
-          avatarStyle: user?.avatar?.avatarStyle,
+          avatarStyle: user?.avatar?.avatarStyle || 'default',
         }}
         form={form}
         onFinish={updateUser}

@@ -1,12 +1,12 @@
-import { createAvatar } from '@dicebear/core';
-import { Avatar, Form, FormInstance, Input } from 'antd';
+import { Form, FormInstance, Input } from 'antd';
 import style from './index.module.scss';
 import { EditOutlined } from '@ant-design/icons';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { AvatarAdvances } from '../avatarAdvances';
 import { useAuth } from '@/app/provider/authContext';
-import { avatarCollections } from '@/utils/const';
-import { getCheapest, getStyleCost } from '@/app/api/utils/const';
+
+import { getStyleCost } from '@/app/api/utils/const';
+import { UserAvatar } from '../userAvatar';
 
 const { Item } = Form;
 
@@ -20,14 +20,7 @@ export const AvatarEditor = ({ form }: Props) => {
   const avatarStyle = Form.useWatch('avatarStyle', form);
   const [openAdvances, setAdvances] = useState(false);
 
-  const uri = createAvatar(
-    avatarCollections?.[
-      avatarStyle || form.getFieldValue('avatarStyle') || getCheapest()?.value
-    ],
-    {
-      seed,
-    },
-  ).toDataUriSync();
+  const innerAvatarStyle = avatarStyle || form.getFieldValue('avatarStyle');
 
   const handleOnCancel = () => {
     setAdvances(false);
@@ -45,8 +38,13 @@ export const AvatarEditor = ({ form }: Props) => {
 
   return (
     <>
-      <div className={style.avatar}>
-        <Avatar shape="circle" src={uri} />
+      <div className={style.center}>
+        <UserAvatar
+          type="profile"
+          avatarStyle={innerAvatarStyle}
+          name={user?.name || user?.defaultName}
+          seed={seed}
+        />
       </div>
 
       <Item

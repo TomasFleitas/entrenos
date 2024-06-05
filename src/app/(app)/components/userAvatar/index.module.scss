@@ -3,12 +3,36 @@
   display: flex;
   justify-content: center;
 
+  .text {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+  }
+
   &.big {
     height: 200px;
     width: 200px;
+    .text {
+      font-size: 130px;
+    }
     > span {
       height: 200px;
       width: 200px;
+    }
+  }
+
+  &.profile {
+    height: 150px;
+    width: 150px;
+    .text {
+      font-size: 100px;
+    }
+    > span {
+      height: 150px;
+      width: 150px;
     }
   }
 

@@ -10,7 +10,7 @@ import {
   COMMON_ALGORITHM_SECOND_THIRD,
   avatarOptions,
 } from '../../utils/const';
-import { descomprimirString } from '../../lib';
+import { descomprimirString, generateRandomColor } from '../../lib';
 import { cookies } from 'next/headers';
 
 const mongo = new MongoConnection();
@@ -97,6 +97,7 @@ export async function PUT(req: NextRequest) {
           ...(oldUser?.avatar || {}),
           ...user.avatar,
         },
+        backgroundColor: oldUser?.backgroundColor || generateRandomColor(),
         notificationTokens: {
           ...oldNotificationTokens,
           ...user.notificationTokens,

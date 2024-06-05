@@ -49,14 +49,27 @@ export async function generateMetadata(
 
   const { avatarStyle, ...rest } = friend?.avatar || {};
 
+  const common = {
+    title: `Invitación de ${friend.name}`,
+    description: `${friend.name} te invita a unirte a nuestra comunidad. ¡Únete ahora y descubre todo lo que tenemos para ofrecer!`,
+  };
+
+  if (avatarStyle === 'default') {
+    return {
+      ...common,
+      openGraph: {
+        images: [...previousImages],
+      },
+    };
+  }
+
   const avatarUri = createAvatar(
     avatarCollections?.[avatarStyle || getCheapest()?.value],
     rest,
   ).toDataUriSync();
 
   return {
-    title: `Invitación de ${friend.name}`,
-    description: `${friend.name} te invita a unirte a nuestra comunidad. ¡Únete ahora y descubre todo lo que tenemos para ofrecer!`,
+    ...common,
     openGraph: {
       images: [avatarUri, ...previousImages],
     },
@@ -93,7 +106,11 @@ export default async function InvitePage({ searchParams }: any) {
 
   return (
     <div className={style.invite}>
-      <UserAvatar {...userFriend.avatar} type="big" />
+      <UserAvatar
+        {...userFriend.avatar}
+        name={userFriend.name || userFriend.defaultName}
+        type="big"
+      />
       <p className={style.text}>
         <b>{userFriend.name}</b> te invita a unirte a nuestra comunidad.
       </p>

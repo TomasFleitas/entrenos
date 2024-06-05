@@ -1,13 +1,8 @@
-.avatar {
-  height: 150px;
-  width: 100%;
+.center {
   display: flex;
   justify-content: center;
+  width: 100%;
   margin-bottom: 20px;
-  > span {
-    height: 100%;
-    width: 150px;
-  }
 }
 
 .select {

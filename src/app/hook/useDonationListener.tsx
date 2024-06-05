@@ -7,10 +7,12 @@ export type TDonation = {
   donor: {
     name: string;
     avatar: User['avatar'];
+    backgroundColor: string;
   };
   recipient: {
     name: string;
     avatar: User['avatar'];
+    backgroundColor: string;
   };
   timestamp: Date;
   amount: number;

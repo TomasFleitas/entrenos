@@ -11,7 +11,11 @@ export const SingleDonationItem = forwardRef<
   return (
     <div ref={ref} className={style.donation}>
       <div>
-        <UserAvatar {...donation.user.avatar} direction="right" />
+        <UserAvatar
+          {...donation.user.avatar}
+          name={donation.user.name}
+          direction="right"
+        />
         {donation.user.name}
       </div>
       <div>
