@@ -34,7 +34,7 @@ export const UserAvatar = ({
     );
   }
 
-  const flip = ['lorelei'].includes(avatarStyle)
+  const flip = ['lorelei','micah'].includes(avatarStyle)
     ? direction !== 'right'
     : direction === 'right';
 
