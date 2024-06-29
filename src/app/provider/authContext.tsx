@@ -58,7 +58,6 @@ export function AuthProvider({ children }: CommonReactProps) {
   const { invitedBy } = useInvite();
   const [isUpdating, setUpdating] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [isSafari, setIsSafari] = useState(false);
 
   useEffect(() => {
     let unsubscribeRequest: () => void;
@@ -90,10 +89,6 @@ export function AuthProvider({ children }: CommonReactProps) {
       }
       setIsLogin(false);
     });
-
-    const userAgent = navigator.userAgent;
-    const safari = /^((?!chrome|android).)*safari/i.test(userAgent);
-    setIsSafari(safari);
 
     return () => {
       unsubscribe();
@@ -172,17 +167,13 @@ export function AuthProvider({ children }: CommonReactProps) {
   const signInWithGoogle = useCallback(async () => {
     setIsLogin(true);
     try {
-      if (isSafari) {
-        await signInWithPopup(auth, new GoogleAuthProvider());
-      } else {
-        await signInWithRedirect(auth, new GoogleAuthProvider());
-      }
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
       console.log(error);
     } finally {
       setIsLogin(false);
     }
-  }, [isSafari]);
+  }, []);
 
   const signOut = useCallback(async () => {
     const instanceId = await getInstanceId();
