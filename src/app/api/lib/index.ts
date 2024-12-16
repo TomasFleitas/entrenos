@@ -36,6 +36,23 @@ export const descomprimirString = async (inputHex: string): Promise<string> => {
   });
 };
 
+export const getSimpleUserToDonate = async (uid: string) => {
+  const user = await UsersModel.aggregate([
+    {
+      $match: {
+        uid: { $ne: uid }, 
+        'mercadoPago.access_token': { $exists: true }, 
+      },
+    },
+    {
+      $sample: { size: 1 }, 
+    },
+  ]);
+
+  return user.length > 0 ? user[0] : null; 
+};
+
+
 export const getUserToDonate = async (uid: string, exludeAlreadySent = false) =>
   await UsersModel.aggregate([
     {

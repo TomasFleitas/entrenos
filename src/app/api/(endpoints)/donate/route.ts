@@ -2,7 +2,11 @@ import { MongoConnection, UsersModel } from '@/app/(app)/mongo';
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '../../lib/firebaseAdmin';
 import { Response } from '../../utils';
-import { comprimirString, getUserToDonate } from '../../lib';
+import {
+  comprimirString,
+  getSimpleUserToDonate,
+  getUserToDonate,
+} from '../../lib';
 import {
   APP_BASE_URL,
   DONATION_TITLE,
@@ -37,6 +41,11 @@ export async function POST(req: NextRequest) {
       if (!users.length) {
         users = await getUserToDonate(uid, true);
       }
+
+      if (!users.length) {
+        users = [await getSimpleUserToDonate(uid)].filter(Boolean)
+      }
+      
       user = users?.[Math.floor(Math.random() * users?.length)];
     }
 
